@@ -9,6 +9,7 @@ namespace PlanningPoker.Core.Entities
         public Guid GameId { get; set; }
         public string GameName { get; set; }
         public DateTime GameTime { get; set; }
+        public Player GameMaster { get; set; }
         public List<Player> Players { get; set; }
         public List<Card> Cards { get; set; }
     }
