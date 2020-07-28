@@ -22,11 +22,12 @@ namespace PlanningPoker.Core.Utilities
         {
             return new Game
             {
-                GameId = new Guid(),
+                GameId = Guid.NewGuid(),
                 GameMaster = gameMaster,
                 GameTime = DateTime.Now,
                 GameName = title,
-                Players = new List<Player>()
+                Players = new List<Player>(),
+                Cards = new List<Card>()
             };
         }
     }
