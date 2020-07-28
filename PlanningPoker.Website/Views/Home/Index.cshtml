@@ -3,6 +3,21 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Planning Poker</h1>
 </div>
+
+<form id="gameMasterForm" action="/Home/GameMaster">
+    <table style="width: 95%">
+        <tr>
+            <td style="width: 20%"><label for="playerName">Game Master Name:</label></td>
+            <td><input type="text" id="playerName" name="playerName" /></td>
+        </tr>
+        <tr>
+            <td><label for="gameName">Game Title:</label></td>
+            <td><input type="text" id="gameName" name="gameName" /></td>
+        </tr>
+        <tr>
+            <td><input type="submit" id="submitButton" name="submitButton" value="Start Game!" /></td>
+        </tr>
+    </table>
+</form>
