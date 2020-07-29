@@ -13,13 +13,13 @@
         <tr>
             <td><label for="playerType">Role:</label></td>
             <td>
-                <input type="radio" id="developerRole" name="developerRole" /><br/>
-                <input type="radio" id="testerRole" name="testerRole" />
+                <input type="radio" id="developerRole" name="developerRole" /><label for="developerRole"> Developer</label><br/>
+                <input type="radio" id="testerRole" name="testerRole" value="Tester" /><label for="testerRole"> Tester</label>
             </td>
         </tr>
         <tr>
-            <td><input type="submit" id="submit" name="Join!" /></td>
-            <td></td>
+            <td><input type="submit" id="submit" name="submit" value="Join!" /></td>
+            <td><input type="text" name="gameId" value="@ViewBag.GameId" style="display:none" /></td>            
         </tr>
     </table>
 </form>

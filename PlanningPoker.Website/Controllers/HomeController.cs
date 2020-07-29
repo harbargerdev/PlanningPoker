@@ -35,8 +35,9 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
-        public IActionResult PlayerStart()
+        public IActionResult PlayerStart([FromQuery] Guid gameId)
         {
+            ViewBag.GameId = gameId;
             return View();
         }
 
