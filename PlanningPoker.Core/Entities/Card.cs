@@ -10,7 +10,9 @@ namespace PlanningPoker.Core.Entities
         public string CardSource { get; set; }
         public string CardNumber { get; set; }
         public int DeveloperSize { get; set; }
+        public int DeveloperVotes { get; set; }
         public int TestingSize { get; set; }
+        public int TestingVotes { get; set; }
         public int StorySize { get; set; }
     }
 }
