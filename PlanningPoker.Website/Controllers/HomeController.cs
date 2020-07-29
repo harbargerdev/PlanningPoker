@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -32,6 +32,11 @@ namespace PlanningPoker.Website.Controllers
             Player gameMaster = new Player { PlayerId = Guid.NewGuid(), PlayerName = playerName, PlayerType = PlayerType.GameMaster };
             Game newGame = _gameUtility.InitializeGameFromGameMaster(gameMaster, gameName);
             ViewBag.Game = newGame;
+            return View();
+        }
+
+        public IActionResult PlayerStart()
+        {
             return View();
         }
 
