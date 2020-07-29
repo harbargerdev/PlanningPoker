@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
-        public IActionResult GameMaster([FromQuery] string playerName, [FromQuery] string gameName)
+        public IActionResult GameMasterStart([FromQuery] string playerName, [FromQuery] string gameName)
         {
             Player gameMaster = new Player { PlayerId = Guid.NewGuid(), PlayerName = playerName, PlayerType = PlayerType.GameMaster };
             Game newGame = _gameUtility.InitializeGameFromGameMaster(gameMaster, gameName);
