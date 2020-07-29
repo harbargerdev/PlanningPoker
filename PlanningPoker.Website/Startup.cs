@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlanningPoker.Core.Utilities;
+using PlanningPoker.Website.Data;
 
 namespace PlanningPoker.Website
 {
@@ -26,6 +28,9 @@ namespace PlanningPoker.Website
         {
             services.AddControllersWithViews();
             services.AddTransient<IGameUtility, GameUtility>();
+
+            services.AddDbContext<GameContext>();//options =>
+                //options.UseMySQL(Configuration.GetConnectionString("gameConnString")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
