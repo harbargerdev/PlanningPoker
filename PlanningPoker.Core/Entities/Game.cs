@@ -12,5 +12,6 @@ namespace PlanningPoker.Core.Entities
         public Player GameMaster { get; set; }
         public List<Player> Players { get; set; }
         public List<Card> Cards { get; set; }
+        public Card ActiveCard { get; set; }
     }
 }
