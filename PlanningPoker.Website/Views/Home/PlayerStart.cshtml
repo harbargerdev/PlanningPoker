@@ -4,7 +4,7 @@
 
 <h1>Welcome to Planning Poker</h1>
 
-<form>
+<form action="/Home/PlayerZone">
     <table>
         <tr>
             <td style="width: 20%"><label for="playerName">Name:</label></td>
@@ -13,8 +13,8 @@
         <tr>
             <td><label for="playerType">Role:</label></td>
             <td>
-                <input type="radio" id="developerRole" name="developerRole" /><label for="developerRole"> Developer</label><br/>
-                <input type="radio" id="testerRole" name="testerRole" value="Tester" /><label for="testerRole"> Tester</label>
+                @Html.RadioButton("Role", "Developer") <span>Developer</span>
+                @Html.RadioButton("Role", "Tester") <span>Tester</span>
             </td>
         </tr>
         <tr>

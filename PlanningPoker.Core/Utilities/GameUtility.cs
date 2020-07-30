@@ -21,6 +21,14 @@ namespace PlanningPoker.Core.Utilities
         /// <param name="cardSource">The Story Card Source</param>
         /// <returns>A new instance of a <see cref="Card" /></returns>
         Card IntializeCardForGame(string cardNumber, string cardSource);
+
+        /// <summary>
+        /// Method Initilaizes a <see cref="Player"/> based on input paramters and defaults
+        /// </summary>
+        /// <param name="playerName">The Player Name</param>
+        /// <param name="playerType">The Player Type</param>
+        /// <returns>A new instance of a <see cref="Player" /></returns>
+        Player InitializePlayer(string playerName, string playerType);
     }
 
     public class GameUtility : IGameUtility
@@ -52,6 +60,19 @@ namespace PlanningPoker.Core.Utilities
                 TestingVotes = 0,
                 CardNumber = cardNumber,
                 CardSource = cardSource
+            };
+        }
+
+        /// <inheritdoc />
+        public Player InitializePlayer(string playerName, string playerType)
+        {
+            PlayerType type = playerType.Equals("Developer") ? PlayerType.Developer : PlayerType.Tester;
+
+            return new Player
+            {
+                PlayerId = Guid.NewGuid(),
+                PlayerName = playerName,
+                PlayerType = type
             };
         }
     }

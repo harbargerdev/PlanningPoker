@@ -49,6 +49,18 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
+        public IActionResult PlayerZone([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            var player = _gameUtility.InitializePlayer(playerName, role);
+            game.Players.Add(player);
+
+            _gameContext.Update(game);
+            _gameContext.SaveChanges();
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
