@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -31,6 +32,9 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
+        #region Game Master Methods
+
+        
         public IActionResult GameMasterStart([FromQuery] string playerName, [FromQuery] string gameName)
         {
             Player gameMaster = new Player { PlayerId = Guid.NewGuid(), PlayerName = playerName, PlayerType = PlayerType.GameMaster };
@@ -44,27 +48,6 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
-        public IActionResult PlayerStart([FromQuery] Guid gameId)
-        {
-            ViewBag.GameId = gameId;
-            return View();
-        }
-
-        public IActionResult PlayerZone([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId)
-        {
-            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
-            var player = _gameUtility.InitializePlayer(playerName, role);
-
-            if (game.Players == null)
-                game.Players = new List<Player>();
-            
-            game.Players.Add(player);
-            _gameContext.Players.Add(player);
-            _gameContext.Update(game);
-            _gameContext.SaveChanges();
-
-            return View();
-        }
 
         public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber,
             [FromQuery] string cardSource, [FromQuery] string action)
@@ -98,6 +81,7 @@ namespace PlanningPoker.Website.Controllers
             if (card != null && game != null)
             {
                 card.IsLocked = true;
+                card.IsFinished = true;
                 game.ActiveCard = null;
 
                 _gameContext.Update(card);
@@ -119,7 +103,7 @@ namespace PlanningPoker.Website.Controllers
 
             if (game != null)
             {
-                card = _gameUtility.IntializeCardForGame(string.Empty, string.Empty);
+                card = _gameUtility.InitializeCardForGame();
                 game.ActiveCard = card;
 
                 _gameContext.Cards.Add(card);
@@ -132,6 +116,80 @@ namespace PlanningPoker.Website.Controllers
 
             return View("GameMasterZone");
         }
+
+        #endregion
+
+        #region Player Methods
+
+        public IActionResult PlayerStart([FromQuery] Guid gameId)
+        {
+            ViewBag.GameId = gameId;
+            return View();
+        }
+
+        public IActionResult PlayerZone([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId, [FromQuery] int size)
+        {
+            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            var player = _gameUtility.InitializePlayer(playerName, role);
+
+            if (game.Players == null)
+                game.Players = new List<Player>();
+
+            if (!game.Players.Contains(player))
+            {
+                game.Players.Add(player);
+                _gameContext.Players.Add(player);
+                _gameContext.Update(game);
+                _gameContext.SaveChanges();
+            }
+
+            if (game.ActiveCard != null && !game.ActiveCard.IsFinished)
+            {
+                HandlePlayerVote(game.ActiveCard, player.PlayerType, size);
+
+                // Get latest version from DB
+                game = _gameContext.Games.FirstOrDefault(g => g.GameId == game.GameId);
+            }
+
+            ViewBag.Player = player;
+            ViewBag.Game = game;
+
+            return View();
+        }
+
+        private void HandlePlayerVote(Card card, PlayerType role, int size)
+        {
+            // This may be dangerous, but the best I can come up with ...
+            while (card.IsLocked)
+            {
+                Thread.Sleep(1000);
+                card = _gameContext.Cards.FirstOrDefault(c => c.CardId == card.CardId);
+            }
+
+            // Lock the card on the db
+            card.IsLocked = true;
+            _gameContext.Update(card);
+            _gameContext.SaveChanges();
+
+            if (role == PlayerType.Developer)
+            {
+                card.DeveloperSize = size > card.DeveloperSize ? size : card.DeveloperSize;
+                card.DeveloperVotes++;
+            }
+            else if (role == PlayerType.Tester)
+            {
+                card.TestingSize = size > card.TestingSize ? size : card.TestingSize;
+                card.TestingVotes++;
+            }
+
+            // Release the lock and save the card
+            card.IsLocked = false;
+            _gameContext.Update(card);
+            _gameContext.SaveChanges();
+        }
+
+        #endregion
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
