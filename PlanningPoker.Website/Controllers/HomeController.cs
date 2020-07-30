@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using PlanningPoker.Core.Entities;
 using PlanningPoker.Core.Utilities;
@@ -61,6 +62,33 @@ namespace PlanningPoker.Website.Controllers
             _gameContext.Players.Add(player);
             _gameContext.Update(game);
             _gameContext.SaveChanges();
+
+            return View();
+        }
+
+        public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber,
+            [FromQuery] string cardSource, [FromQuery] string action)
+        {
+            Card card;
+            if (cardId == Guid.Empty)
+            {
+                card = _gameUtility.IntializeCardForGame(string.Empty, string.Empty);
+                _gameContext.Cards.Add(card);
+            }   
+            else
+            {
+                card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
+                card.CardNumber = cardNumber != null ? cardNumber : string.Empty;
+                card.CardSource = cardSource != null ? cardSource : string.Empty;
+                card.IsLocked = !action.Equals("Submit");
+                _gameContext.Update(card);
+            }
+            _gameContext.SaveChanges();
+
+            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+
+            ViewBag.Game = game;
+            ViewBag.Card = card;
 
             return View();
         }
