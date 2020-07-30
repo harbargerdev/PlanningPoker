@@ -103,7 +103,11 @@ namespace PlanningPoker.Website.Controllers
 
             if (game != null)
             {
+                if (game.Cards == null)
+                    game.Cards = new List<Card>();
+
                 card = _gameUtility.InitializeCardForGame();
+                game.Cards.Add(card);
                 game.ActiveCard = card;
 
                 _gameContext.Cards.Add(card);
