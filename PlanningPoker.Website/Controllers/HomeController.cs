@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -58,7 +58,7 @@ namespace PlanningPoker.Website.Controllers
                 game.Players = new List<Player>();
             
             game.Players.Add(player);
-
+            _gameContext.Players.Add(player);
             _gameContext.Update(game);
             _gameContext.SaveChanges();
 
