@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -53,6 +53,10 @@ namespace PlanningPoker.Website.Controllers
         {
             var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
             var player = _gameUtility.InitializePlayer(playerName, role);
+
+            if (game.Players == null)
+                game.Players = new List<Player>();
+            
             game.Players.Add(player);
 
             _gameContext.Update(game);
