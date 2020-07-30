@@ -6,7 +6,7 @@
 
 <h1>Game Master Admin</h1>
 <h3>Use the below form to create a card or edit the details. Click the close voting button to end voting. When you are ready for a new card, click the new card button.</h3>
-
+<br />
 <form>
     <table>
         <tr>
@@ -30,8 +30,22 @@
             <td><input type="text" name="" readonly="readonly" value="@card.DeveloperSize" /></td>
         </tr>
         <tr>
-            <td></td>
-            <td><input type="submit" name="submit" value="Submit" /></td>
+            <td>@Html.Label("Testing Size: ")</td>
+            <td><input type="text" name="" readonly="readonly" value="@card.TestingSize" /></td>
+        </tr>
+        <tr>
+            <td>@Html.Label("Card Size: ")</td>
+            <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("GameMasterZone", "Home", new { gameId = game.GameId })'"/>
+            </td>
+            <td>
+                <button type="submit" name="submit" value="submit">Create Card</button>
+                <!--<button type="submit" name="lock" value ="lock">Close Voting</button>-->
+                <input type="button" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'"/>
+            </td>
         </tr>
     </table>
 </form>
