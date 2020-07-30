@@ -6,4 +6,6 @@
 
 <h1>@game.GameName</h1>
 
-<span>Link that players can use to join the game: http://localhost:44383/Home/PlayerStart?gameId=@game.GameId</span>
+<span>Link that players can use to join the game:
+    @Html.ActionLink("Player Start", "PlayerStart", "Home", game.GameId)
+    https://localhost:44383/Home/PlayerStart?gameId=@game.GameId</span>
