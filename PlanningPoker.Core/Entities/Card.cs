@@ -14,5 +14,6 @@ namespace PlanningPoker.Core.Entities
         public int TestingSize { get; set; }
         public int TestingVotes { get; set; }
         public int StorySize { get; set; }
+        public bool IsLocked { get; set; }
     }
 }

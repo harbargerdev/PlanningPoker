@@ -59,7 +59,8 @@ namespace PlanningPoker.Core.Utilities
                 DeveloperVotes = 0,
                 TestingVotes = 0,
                 CardNumber = cardNumber,
-                CardSource = cardSource
+                CardSource = cardSource,
+                IsLocked = false
             };
         }
 
