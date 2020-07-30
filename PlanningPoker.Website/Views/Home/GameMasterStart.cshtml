@@ -6,8 +6,9 @@
 
 <h1>@game.GameName</h1>
 
-<span>Link that players can use to join the game: http://localhost:44383/Home/PlayerStart?gameId=@game.GameId</span>
+<span> Link that players can use to join the game: https://localhost:44383/Home/PlayerStart?gameId=@game.GameId </span>
 
-<form>
-
+<form action="/Home/GameMasterZone">
+    <input type="text" name="gameId" value="@game.GameId" style="display:none" />
+    <input type="submit" value="Start" />
 </form>
