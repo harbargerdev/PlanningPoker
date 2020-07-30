@@ -17,10 +17,8 @@ namespace PlanningPoker.Core.Utilities
         /// <summary>
         /// Method Intializes a <see cref="Card"/> based on input paramters and defaults
         /// </summary>
-        /// <param name="cardNumber">The Story Card Number</param>
-        /// <param name="cardSource">The Story Card Source</param>
         /// <returns>A new instance of a <see cref="Card" /></returns>
-        Card IntializeCardForGame(string cardNumber, string cardSource);
+        Card InitializeCardForGame();
 
         /// <summary>
         /// Method Initilaizes a <see cref="Player"/> based on input paramters and defaults
@@ -48,7 +46,7 @@ namespace PlanningPoker.Core.Utilities
         }
 
         /// <inheritdoc />
-        public Card IntializeCardForGame(string cardNumber, string cardSource)
+        public Card InitializeCardForGame()
         {
             return new Card
             {
@@ -58,9 +56,10 @@ namespace PlanningPoker.Core.Utilities
                 TestingSize = 0,
                 DeveloperVotes = 0,
                 TestingVotes = 0,
-                CardNumber = cardNumber,
-                CardSource = cardSource,
-                IsLocked = false
+                CardNumber = string.Empty,
+                CardSource = string.Empty,
+                IsLocked = false,
+                IsFinished = false
             };
         }
 
