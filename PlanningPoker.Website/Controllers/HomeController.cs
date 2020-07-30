@@ -73,10 +73,7 @@ namespace PlanningPoker.Website.Controllers
             Card card;
             if (cardId == Guid.Empty && game != null)
             {
-                card = _gameUtility.IntializeCardForGame(string.Empty, string.Empty);
-                game.ActiveCard = card;
-                _gameContext.Cards.Add(card);
-                _gameContext.Update(game);
+                return GameMasterNewCard(gameId);
             }   
             else
             {
