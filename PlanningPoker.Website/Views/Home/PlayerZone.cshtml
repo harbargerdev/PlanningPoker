@@ -1,3 +1,50 @@
 ﻿@{
     ViewData["Title"] = "Play Zone";
+    PlanningPoker.Core.Entities.Game game = ViewBag.Game;
+    PlanningPoker.Core.Entities.Player player = ViewBag.Player;
 }
+
+<h1>@game.GameName</h1>
+<h3>@player.PlayerName</h3>
+<br/>
+<span>Active Card: @game.ActiveCard?.CardNumber</span>
+<form action="/Home/PlayerZone">
+    <table>
+        <tr>
+            <td>@Html.RadioButton("size", "0", true)</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "1", true)</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "2", true)</td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "3", true)</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "5", true)</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "8", true)</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "13", true)</td>
+            <td>13</td>
+        </tr>
+        <tr>
+            <td>@Html.RadioButton("size", "21", true)</td>
+            <td>21</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+</form>
