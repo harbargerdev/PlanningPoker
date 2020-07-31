@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using PlanningPoker.Core.Entities;
@@ -52,7 +53,7 @@ namespace PlanningPoker.Website.Controllers
         public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber,
             [FromQuery] string cardSource, [FromQuery] string action)
         {
-            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
             Card card;
             if (cardId == Guid.Empty && game != null)
             {
@@ -75,7 +76,7 @@ namespace PlanningPoker.Website.Controllers
 
         public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId)
         {
-            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
             var card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
 
             if (card != null && game != null)
@@ -193,7 +194,6 @@ namespace PlanningPoker.Website.Controllers
         }
 
         #endregion
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
