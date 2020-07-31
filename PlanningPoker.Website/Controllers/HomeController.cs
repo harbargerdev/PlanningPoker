@@ -148,6 +148,9 @@ namespace PlanningPoker.Website.Controllers
                 _gameContext.SaveChanges();
             }
 
+            ViewBag.Player = player;
+            ViewBag.Game = game;
+
             return View("PlayerZone");
         }
 
