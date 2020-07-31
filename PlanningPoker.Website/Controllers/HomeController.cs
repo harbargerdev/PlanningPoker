@@ -50,20 +50,21 @@ namespace PlanningPoker.Website.Controllers
         }
 
 
-        public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber,
-            [FromQuery] string cardSource, [FromQuery] string action)
+        public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber, [FromQuery] string cardSource)
         {
             var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
             Card card;
             if (cardId == Guid.Empty && game != null)
             {
                 return GameMasterNewCard(gameId);
-            }   
+            }
             else
             {
                 card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
                 card.CardNumber = cardNumber != null ? cardNumber : string.Empty;
                 card.CardSource = cardSource != null ? cardSource : string.Empty;
+                game.ActiveCard = card;
+                _gameContext.Update(game);
                 _gameContext.Update(card);
             }
             _gameContext.SaveChanges();
@@ -84,6 +85,8 @@ namespace PlanningPoker.Website.Controllers
                 card.IsLocked = true;
                 card.IsFinished = true;
                 game.ActiveCard = null;
+
+                card.StorySize = card.DeveloperSize > card.TestingSize ? card.DeveloperSize : card.TestingSize;
 
                 _gameContext.Update(card);
                 _gameContext.Update(game);
@@ -156,7 +159,7 @@ namespace PlanningPoker.Website.Controllers
 
         public IActionResult PlayerZone([FromQuery] Guid gameId, [FromQuery] Guid playerId, [FromQuery] int size)
         {
-            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            var game = _gameContext.Games.Include(g => g.ActiveCard).FirstOrDefault(g => g.GameId == gameId);
             var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
 
             if (game.ActiveCard != null && !game.ActiveCard.IsFinished)
