@@ -15,35 +15,38 @@
             <td>0</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "1", true)</td>
+            <td>@Html.RadioButton("size", "1", false)</td>
             <td>1</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "2", true)</td>
+            <td>@Html.RadioButton("size", "2", false)</td>
             <td>2</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "3", true)</td>
+            <td>@Html.RadioButton("size", "3", false)</td>
             <td>3</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "5", true)</td>
+            <td>@Html.RadioButton("size", "5", false)</td>
             <td>5</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "8", true)</td>
+            <td>@Html.RadioButton("size", "8", false)</td>
             <td>8</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "13", true)</td>
+            <td>@Html.RadioButton("size", "13", false)</td>
             <td>13</td>
         </tr>
         <tr>
-            <td>@Html.RadioButton("size", "21", true)</td>
+            <td>@Html.RadioButton("size", "21", false)</td>
             <td>21</td>
         </tr>
         <tr>
-            <td></td>
+            <td>
+                <input type="text" name="gameId" value="@game.GameId" style="display: none"/>
+                <input type="text" name="playerId" value="@player.PlayerId" style="display: none" />
+            </td>
             <td><input type="submit" value="Submit" /></td>
         </tr>
     </table>
