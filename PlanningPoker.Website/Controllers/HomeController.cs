@@ -132,6 +132,25 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
+        public IActionResult PlayerCreation([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games.Include(g => g.Players).FirstOrDefault(g => g.GameId == gameId);
+            var player = _gameUtility.InitializePlayer(playerName, role);
+
+            if (game.Players == null)
+                game.Players = new List<Player>();
+
+            if (!game.Players.Contains(player))
+            {
+                game.Players.Add(player);
+                _gameContext.Players.Add(player);
+                _gameContext.Update(game);
+                _gameContext.SaveChanges();
+            }
+
+            return View("PlayerZone");
+        }
+
         public IActionResult PlayerZone([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId, [FromQuery] int size)
         {
             var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
