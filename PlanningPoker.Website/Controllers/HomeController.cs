@@ -154,21 +154,10 @@ namespace PlanningPoker.Website.Controllers
             return View("PlayerZone");
         }
 
-        public IActionResult PlayerZone([FromQuery] string playerName, [FromQuery] string role, [FromQuery] Guid gameId, [FromQuery] int size)
+        public IActionResult PlayerZone([FromQuery] Guid gameId, [FromQuery] Guid playerId, [FromQuery] int size)
         {
             var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
-            var player = _gameUtility.InitializePlayer(playerName, role);
-
-            if (game.Players == null)
-                game.Players = new List<Player>();
-
-            if (!game.Players.Contains(player))
-            {
-                game.Players.Add(player);
-                _gameContext.Players.Add(player);
-                _gameContext.Update(game);
-                _gameContext.SaveChanges();
-            }
+            var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
 
             if (game.ActiveCard != null && !game.ActiveCard.IsFinished)
             {
