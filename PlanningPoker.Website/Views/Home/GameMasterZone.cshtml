@@ -1,4 +1,5 @@
-﻿@{
+﻿@model PlanningPoker.Core.Entities.Game
+@{
     ViewData["Title"] = "Game Master Zone";
     PlanningPoker.Core.Entities.Card card = ViewBag.Card;
     PlanningPoker.Core.Entities.Game game = ViewBag.Game;
@@ -49,3 +50,23 @@
         </tr>
     </table>
 </form>
+<br />
+<span> History </span>
+<table>
+    <tr>
+        <th>Story Number</th>
+        <th>Developer Size</th>
+        <th>Testing Size</th>
+        <th>Story Size</th>
+    </tr>
+    
+    @foreach(var c in game.Cards)
+    {
+        <tr>
+            <td>@Html.DisplayFor(crd => c.CardNumber)</td>
+            <td>@Html.DisplayFor(crd => c.DeveloperSize)</td>
+            <td>@Html.DisplayFor(crd => c.TestingSize)</td>
+            <td>@Html.DisplayFor(crd => c.StorySize)</td>
+        </tr>
+    }
+</table>
