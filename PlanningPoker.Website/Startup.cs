@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlanningPoker.Core.Utilities;
 using PlanningPoker.Website.Data;
+using PlanningPoker.Website.Hubs;
 
 namespace PlanningPoker.Website
 {
@@ -28,6 +29,8 @@ namespace PlanningPoker.Website
         {
             services.AddControllersWithViews();
             services.AddTransient<IGameUtility, GameUtility>();
+
+            services.AddSignalR();
 
             services.AddDbContext<GameContext>();//options =>
                 //options.UseMySQL(Configuration.GetConnectionString("gameConnString")));
@@ -58,6 +61,7 @@ namespace PlanningPoker.Website
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<VoteHub>("/votehub");
             });
         }
     }
