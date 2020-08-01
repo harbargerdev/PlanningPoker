@@ -3,10 +3,15 @@
     PlanningPoker.Core.Entities.Game game = ViewBag.Game;
     PlanningPoker.Core.Entities.Player player = ViewBag.Player;
 }
-
-<h1>@game.GameName</h1>
-<h3>@player.PlayerName</h3>
-<br/>
+<div class="text-center">
+    <h1>Game: @game.GameName</h1>
+    <h3>Player: @player.PlayerName</h3>
+    <span>
+        As the game master calls out a card, when you are ready to estimate, select a size below.
+    </span>
+</div>
+<br />
+<br />
 <span>Active Card: @game.ActiveCard?.CardNumber</span>
 <form action="/Home/PlayerZone">
     <table>
