@@ -1,7 +1,5 @@
 ﻿"use strict";
 
-import { signalR } from "./signalr/dist/browser/signalr";
-
 var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").build();
 
 // disable finalize button
