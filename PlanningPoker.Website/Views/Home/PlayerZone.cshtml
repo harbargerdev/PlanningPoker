@@ -61,14 +61,13 @@
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script type ="text/javascript">
-    var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").build();
+    var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").configureLogging(signalR.LogLevel.Information).build();
 
     $(document).ready(function () {
-        var frm = $('form[name="votingForm"]');
         var status = $('#votingFinished').value;
         if (status === "True") {
             var gameId = $('#gameId').value;
-            connection.send(gameId, "complete");
+            connection.sendMessage("VotingStatus", [ gameId, "complete" ]);
         }
     });
 </script>
