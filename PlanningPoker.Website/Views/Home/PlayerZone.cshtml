@@ -64,10 +64,14 @@
     var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").configureLogging(signalR.LogLevel.Information).build();
 
     $(document).ready(function () {
-        var status = $('#votingFinished').value;
+        var status = document.getElementById('votingFinished').value;
         if (status === "True") {
-            var gameId = $('#gameId').value;
-            connection.sendMessage("VotingStatus", [ gameId, "complete" ]);
+            var gameId = document.getElementById('gameId').value;
+            connection.start().then(function () {
+                connection.invoke("SendMessage", gameId, "complete").catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
         }
     });
 </script>
