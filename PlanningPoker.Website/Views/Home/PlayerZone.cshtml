@@ -2,6 +2,7 @@
     ViewData["Title"] = "Play Zone";
     PlanningPoker.Core.Entities.Game game = ViewBag.Game;
     PlanningPoker.Core.Entities.Player player = ViewBag.Player;
+    var votingComplete = ViewBag.VotingComplete.ToString();
 }
 <div class="text-center">
     <h1>Game: @game.GameName</h1>
@@ -13,7 +14,7 @@
 <br />
 <br />
 <span>Active Card: @game.ActiveCard?.CardNumber</span>
-<form action="/Home/PlayerZone">
+<form id="votingForm" name="votingForm" action="/Home/PlayerZone">
     <table>
         <tr>
             <td>@Html.RadioButton("size", "0", true)</td>
@@ -49,10 +50,28 @@
         </tr>
         <tr>
             <td>
-                <input type="text" name="gameId" value="@game.GameId" style="display: none"/>
+                <input type="text" id="gameId" name="gameId" value="@game.GameId" style="display: none"/>
                 <input type="text" name="playerId" value="@player.PlayerId" style="display: none" />
+                <input type="text" id="votingFinished" name="VotingFinished" value="@votingComplete" style="display: none" />
             </td>
             <td><input type="submit" value="Submit" /></td>
         </tr>
     </table>
 </form>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type ="text/javascript">
+    var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").configureLogging(signalR.LogLevel.Information).build();
+
+    $(document).ready(function () {
+        var status = document.getElementById('votingFinished').value;
+        if (status === "True") {
+            var gameId = document.getElementById('gameId').value;
+            connection.start().then(function () {
+                connection.invoke("SendMessage", gameId, "complete").catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
+        }
+    });
+</script>

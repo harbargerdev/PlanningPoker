@@ -151,6 +151,7 @@ namespace PlanningPoker.Website.Controllers
                 _gameContext.SaveChanges();
             }
 
+            ViewBag.VotingComplete = false;
             ViewBag.Player = player;
             ViewBag.Game = game;
 
@@ -159,10 +160,10 @@ namespace PlanningPoker.Website.Controllers
 
         public IActionResult PlayerZone([FromQuery] Guid gameId, [FromQuery] Guid playerId, [FromQuery] int size)
         {
-            var game = _gameContext.Games.Include(g => g.ActiveCard).FirstOrDefault(g => g.GameId == gameId);
+            var game = _gameContext.Games.Include(g => g.ActiveCard).Include(p => p.Players).FirstOrDefault(g => g.GameId == gameId);
             var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
 
-            if (game.ActiveCard != null && !game.ActiveCard.IsFinished)
+            if (game?.ActiveCard != null && !game.ActiveCard.IsFinished)
             {
                 HandlePlayerVote(game.ActiveCard, player.PlayerType, size);
 
@@ -170,6 +171,7 @@ namespace PlanningPoker.Website.Controllers
                 game = _gameContext.Games.FirstOrDefault(g => g.GameId == game.GameId);
             }
 
+            ViewBag.VotingComplete = game?.ActiveCard?.DeveloperVotes + game?.ActiveCard?.TestingVotes >= game?.Players.Count();
             ViewBag.Player = player;
             ViewBag.Game = game;
 
