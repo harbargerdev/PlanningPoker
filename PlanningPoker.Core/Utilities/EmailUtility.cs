@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
@@ -24,14 +24,14 @@ namespace PlanningPoker.Core.Utilities
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("Hello " + playerName + ",\n");
-            sb.Append("You setup a game and wanted to come back to it at a later point so here a link you can use to do so:\n");
+            sb.Append("Hello " + playerName + ",<br/>");
+            sb.Append("You setup a game and wanted to come back to it at a later point so here a link you can use to do so:<br/>");
             sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/GameMasterStart?playerName=" + playerName +
-                        "&gameName=" + gameName + "&submitButton=Start+Game%21'>Game Start</a>\n\n");
-            sb.Append("If you need a link for players to join, here is a link for them:\n");
-            sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/PlayerStart?gameId=" + gameId.ToString() + "'>Player Start</a>\n");
-            sb.Append("Thank you for your interest in playing an we look forward to you coming back to play.\n");
-            sb.Append("\nSincerely\n");
+                        "&gameName=" + gameName + "&submitButton=Start+Game%21'>Game Start</a><br/><br/>");
+            sb.Append("If you need a link for players to join, here is a link for them:<br/>");
+            sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/PlayerStart?gameId=" + gameId.ToString() + "'>Player Start</a><br/>");
+            sb.Append("Thank you for your interest in playing an we look forward to you coming back to play.<br/>");
+            sb.Append("<br/>Sincerely<br/>");
             sb.Append("harbargerdev");
 
             string body = sb.ToString();
