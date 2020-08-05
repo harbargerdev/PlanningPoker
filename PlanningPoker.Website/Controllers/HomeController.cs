@@ -139,10 +139,10 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
-        public IActionResult SendGmStartEmail(string address, string playerName, Guid gameId)
+        public IActionResult SendGmStartEmail([FromQuery] string emailAddress, [FromQuery] string playerName, [FromQuery] Guid gameId)
         {
             var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
-            _emailUtility.SendGameStartLinkEmail(address, playerName, game.GameName, gameId);
+            _emailUtility.SendGameStartLinkEmail(emailAddress, playerName, game.GameName, gameId);
 
             return View("ThankYou");
         }
