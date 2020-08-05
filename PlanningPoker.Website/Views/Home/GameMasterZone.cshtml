@@ -70,4 +70,8 @@
         </tr>
     }
 </table>
+<form id="goToSummary" name="goToSummary" action="~/Home/GameMasterFinishEmail" >
+    <input type="text" id="gameId" name="gameId" value="@game.GameId" style="display: none" />
+    <input type="submit" name="toSummary" id="toSummary" value="Go To Summary" />
+</form>
 <script type="module" src="~/js/voting.js"></script>
