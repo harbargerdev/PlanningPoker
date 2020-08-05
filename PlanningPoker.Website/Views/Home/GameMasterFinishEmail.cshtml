@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Wrap-up Email";
+    PlanningPoker.Core.Entities.Game game = ViewBag.Game;
+}
+
+<div>
+    <h1 class="display-4">End of Game Summary</h1>
+    <h2 class="display-4">@game.GameName</h2>
+    <h3 class="display-4">Game Master: @game.GameMaster.PlayerName</h3>
+    <br/>
+    Players:
+    <ul>
+        @for(var i = 0; i < game.Players.Count; i++)
+        {
+            <li>@game.Players[i].PlayerName</li>
+        }
+    </ul>
+    <br/>
+    <table>
+        <thead>
+            <tr>
+                <td>Story Card</td>
+                <td>Developer Size</td>
+                <td>Testing Size</td>
+                <td>Story Size</td>
+            </tr>
+        </thead>
+        <tbody>
+            @for(var i = 0; i < game.Cards.Count; i++)
+            {
+                <tr>
+                    <td>@game.Cards[i].CardNumber</td>
+                    <td>@game.Cards[i].DeveloperSize</td>
+                    <td>@game.Cards[i].TestingSize</td>
+                    <td>@game.Cards[i].StorySize</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <form id="emailSubmission" action="~/Home/SendGmSummaryEmail">
+        <span>Enter your email to get a copy of this report via email:</span>
+        <input type="text" id="emailAddress" name="EmailAddress" value="" />
+        <input type="text" id="gameId" name="GameId" value="@game.GameId" style="display:none" />
+        <input type="submit" id="submit" name="Submit" value="Email" />
+    </form>
+</div>

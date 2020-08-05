@@ -147,6 +147,32 @@ namespace PlanningPoker.Website.Controllers
             return View("ThankYou");
         }
 
+        public IActionResult GameMasterFinishEmail([FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games
+                .Include(g => g.Cards)
+                .Include(g => g.GameMaster)
+                .Include(g => g.Players)
+                .FirstOrDefault(g => g.GameId == gameId);
+
+            ViewBag.Game = game;
+
+            return View();
+        }
+
+        public IActionResult SendGmSummaryEmail([FromQuery] string emailAddress, [FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games
+                .Include(g => g.Cards)
+                .Include(g => g.GameMaster)
+                .Include(g => g.Players)
+                .FirstOrDefault(g => g.GameId == gameId);
+
+            _emailUtility.SendGameSummaryEmail(emailAddress, game);
+
+            return View("ThankYou");
+        }
+
         #endregion
 
         #region Player Methods
