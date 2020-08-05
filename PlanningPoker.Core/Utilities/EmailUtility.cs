@@ -1,3 +1,4 @@
+using PlanningPoker.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -15,6 +16,13 @@ namespace PlanningPoker.Core.Utilities
         /// <param name="playerName">The user's name</param>
         /// <param name="gameId">The game id</param>
         void SendGameStartLinkEmail(string toAddress, string playerName, string gameName, Guid gameId);
+
+        /// <summary>
+        /// Method used to send an email that has the game summary
+        /// </summary>
+        /// <param name="toAddress">The email to address</param>
+        /// <param name="game">The finished <see cref="Game"/></param>
+        void SendGameSummaryEmail(string toAddress, Game game);
     }
 
     public class EmailUtility : IEmailUtility
@@ -36,6 +44,33 @@ namespace PlanningPoker.Core.Utilities
 
             string body = sb.ToString();
             SendMessage(toAddress, "Come Back to Start Your Game", body);
+        }
+
+        /// <inheritdoc />
+        public void SendGameSummaryEmail(string toAddress, Game game)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("Hello " + game.GameMaster.PlayerName + ",<br/><br/>");
+            sb.Append("Here is your post game summary for " + game.GameName + ".<br/>");
+            sb.Append("Players:<br/>");
+            sb.Append("<ul>");
+            foreach(var player in game.Players)
+            {
+                sb.Append("<li>" + player.PlayerName + "</li>");
+            }
+            sb.Append("</ul><br/>");
+            sb.Append("Stories sized:<br/>");
+            sb.Append("<table><thead><tr><td>Story Card</td><td>Developer Size</td><td>Testing Size</td><td>Story Size</td></thead>");
+            foreach(var story in game.Cards)
+            {
+                sb.Append("<tr><td>" + story.CardNumber + "</td><td>" + story.DeveloperSize + "</td><td>" + story.TestingSize + "</td><td>" + story.StorySize + "</td></tr>");
+            }
+            sb.Append("</table><br />");
+            sb.Append("Thanks again for playing, and come back for your next session.");
+
+            string body = sb.ToString();
+            SendMessage(toAddress, "Your Game Summary", body);
         }
 
         private void SendMessage(string toAddress, string subject, string body)
