@@ -29,6 +29,7 @@ namespace PlanningPoker.Website
         {
             services.AddControllersWithViews();
             services.AddTransient<IGameUtility, GameUtility>();
+            services.AddTransient<IEmailUtility, EmailUtility>();
 
             services.AddSignalR();
 
