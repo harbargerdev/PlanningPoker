@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Game Master";
     PlanningPoker.Core.Entities.Game game = ViewBag.Game;
+    PlanningPoker.Core.Entities.Player player = ViewBag.Player;
 }
 
 <h1>@game.GameName</h1>
@@ -13,4 +14,10 @@
 <form action="/Home/GameMasterZone">
     <input type="text" name="gameId" value="@game.GameId" style="display:none" />
     <input type="submit" value="Start" />
+</form>
+<br />
+<form action="~/Home/GameMasterStartEmail">
+    <input type="text" name="playerId" id="playerId" value="@player.PlayerId" style="display:none" />
+    <input type="text" name="gameId" id="gameId" value="@game.GameId" style="display:none" />
+    <input type="submit" id="navEmail" name="navEmail" value="Email Me a Link" />
 </form>

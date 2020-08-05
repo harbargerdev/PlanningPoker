@@ -19,12 +19,14 @@ namespace PlanningPoker.Website.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IGameUtility _gameUtility;
+        private readonly IEmailUtility _emailUtility;
         private readonly GameContext _gameContext;
 
-        public HomeController(ILogger<HomeController> logger, IGameUtility gameUtility, GameContext gameContext)
+        public HomeController(ILogger<HomeController> logger, IGameUtility gameUtility, IEmailUtility emailUtility, GameContext gameContext)
         {
             _logger = logger;
             _gameUtility = gameUtility;
+            _emailUtility = emailUtility;
             _gameContext = gameContext;
         }
 
@@ -46,6 +48,7 @@ namespace PlanningPoker.Website.Controllers
             _gameContext.SaveChanges();
             
             ViewBag.Game = newGame;
+            ViewBag.Player = gameMaster;
             return View();
         }
 
@@ -123,6 +126,25 @@ namespace PlanningPoker.Website.Controllers
             ViewBag.Card = card;
 
             return View("GameMasterZone");
+        }
+
+        public IActionResult GameMasterStartEmail([FromQuery] Guid playerId, [FromQuery] Guid gameId)
+        {
+            var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+
+            ViewBag.Game = game;
+            ViewBag.Player = player;
+
+            return View();
+        }
+
+        public IActionResult SendGmStartEmail([FromQuery] string emailAddress, [FromQuery] string playerName, [FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
+            _emailUtility.SendGameStartLinkEmail(emailAddress, playerName, game.GameName, gameId);
+
+            return View("ThankYou");
         }
 
         #endregion
