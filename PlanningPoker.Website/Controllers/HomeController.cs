@@ -168,6 +168,8 @@ namespace PlanningPoker.Website.Controllers
                 .Include(g => g.Players)
                 .FirstOrDefault(g => g.GameId == gameId);
 
+            _emailUtility.SendGameSummaryEmail(emailAddress, game);
+
             return View("ThankYou");
         }
 
