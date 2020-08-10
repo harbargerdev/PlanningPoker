@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+PlanningPoker.Cleaner/PlanningPoker.Cleaner/aws-lambda-tools-defaults.json
+
+PlanningPoker.Website/aws-beanstalk-tools-defaults.json
