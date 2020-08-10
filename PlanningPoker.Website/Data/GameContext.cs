@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PlanningPoker.Core.Entities;
 
 namespace PlanningPoker.Website.Data
@@ -18,5 +18,6 @@ namespace PlanningPoker.Website.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Player> Players { get; set; }
+        public DbSet<Vote> Votes { get; set; }
     }
 }
