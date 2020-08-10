@@ -89,8 +89,12 @@ namespace PlanningPoker.Website.Controllers
                 card.IsFinished = true;
                 game.ActiveCard = null;
 
-                card.DeveloperSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Developer).Max(v => v.Score);
-                card.TestingSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Max(v => v.Score);
+                if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Developer).Any())
+                    card.DeveloperSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Developer).Max(v => v.Score);
+                
+                if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Any())
+                    card.TestingSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Max(v => v.Score);
+                
                 card.StorySize = card.Votes.Max(v => v.Score);
 
                 _gameContext.Update(card);
