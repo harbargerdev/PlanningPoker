@@ -63,7 +63,7 @@ namespace PlanningPoker.Website.Controllers
             }
             else
             {
-                card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
+                card = _gameContext.Cards.Include(c => c.Votes).ThenInclude(v => v.Player).FirstOrDefault(c => c.CardId == cardId);
                 card.CardNumber = cardNumber != null ? cardNumber : string.Empty;
                 card.CardSource = cardSource != null ? cardSource : string.Empty;
                 game.ActiveCard = card;
