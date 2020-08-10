@@ -81,7 +81,7 @@ namespace PlanningPoker.Website.Controllers
         public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId)
         {
             var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
-            var card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
+            var card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(c => c.CardId == cardId);
 
             if (card != null && game != null)
             {
@@ -242,16 +242,20 @@ namespace PlanningPoker.Website.Controllers
             _gameContext.Update(card);
             _gameContext.SaveChanges();
 
+            card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(c => c.CardId == card.CardId);
+
             var vote = card.Votes.FirstOrDefault(v => v.Player.PlayerId == player.PlayerId);
 
             if (vote == null)
             {
                 vote = new Vote { Card = card, Player = player, Score = size, VoteId = Guid.NewGuid() };
                 card.Votes.Add(vote);
+                _gameContext.Add(vote);
             }
             else
             {
                 vote.Score = size;
+                _gameContext.Update(vote);
             }
             
             // Release the lock and save the card
