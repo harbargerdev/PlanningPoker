@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PlanningPoker.Website.Migrations
 {
-    public partial class VotingHistory : Migration
+    public partial class VotingHistoryCorrectedTableName : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Vote",
+                name: "Votes",
                 columns: table => new
                 {
                     VoteId = table.Column<byte[]>(nullable: false),
@@ -18,15 +18,15 @@ namespace PlanningPoker.Website.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vote", x => x.VoteId);
+                    table.PrimaryKey("PK_Votes", x => x.VoteId);
                     table.ForeignKey(
-                        name: "FK_Vote_Cards_CardId",
+                        name: "FK_Votes_Cards_CardId",
                         column: x => x.CardId,
                         principalTable: "Cards",
                         principalColumn: "CardId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Vote_Players_PlayerId",
+                        name: "FK_Votes_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Players",
                         principalColumn: "PlayerId",
@@ -34,20 +34,20 @@ namespace PlanningPoker.Website.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vote_CardId",
-                table: "Vote",
+                name: "IX_Votes_CardId",
+                table: "Votes",
                 column: "CardId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vote_PlayerId",
-                table: "Vote",
+                name: "IX_Votes_PlayerId",
+                table: "Votes",
                 column: "PlayerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Vote");
+                name: "Votes");
         }
     }
 }

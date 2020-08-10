@@ -9,8 +9,8 @@ using PlanningPoker.Website.Data;
 namespace PlanningPoker.Website.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20200810152518_VotingHistory")]
-    partial class VotingHistory
+    [Migration("20200810213817_VotingHistoryCorrectedTableName")]
+    partial class VotingHistoryCorrectedTableName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -132,7 +132,7 @@ namespace PlanningPoker.Website.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Vote");
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Card", b =>

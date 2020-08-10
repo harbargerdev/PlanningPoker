@@ -130,7 +130,7 @@ namespace PlanningPoker.Website.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Vote");
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Card", b =>
