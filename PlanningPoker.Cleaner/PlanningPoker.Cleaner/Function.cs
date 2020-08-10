@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Microsoft.EntityFrameworkCore;
 using PlanningPoker.Cleaner.Data;
+using PlanningPoker.Core.Entities;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -32,6 +33,7 @@ namespace PlanningPoker.Cleaner
             // Get List of games older than yesterday
             var games = _context.Games
                 .Include(g => g.Cards)
+                .ThenInclude(c => c.Votes)
                 .Include(g => g.GameMaster)
                 .Include(g => g.Players)
                 .ToList()
@@ -45,6 +47,9 @@ namespace PlanningPoker.Cleaner
                     _context.Update(game);
                     _context.SaveChanges();
                 }
+
+                foreach (Card card in game.Cards)
+                    _context.RemoveRange(card.Votes);
 
                 _context.Cards.RemoveRange(game.Cards);
                 _context.Players.Remove(game.GameMaster);

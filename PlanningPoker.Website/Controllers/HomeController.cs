@@ -81,7 +81,7 @@ namespace PlanningPoker.Website.Controllers
         public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId)
         {
             var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
-            var card = _gameContext.Cards.FirstOrDefault(c => c.CardId == cardId);
+            var card = _gameContext.Cards.Include(c => c.Votes).ThenInclude(v => v.Player).FirstOrDefault(c => c.CardId == cardId);
 
             if (card != null && game != null)
             {
@@ -89,7 +89,13 @@ namespace PlanningPoker.Website.Controllers
                 card.IsFinished = true;
                 game.ActiveCard = null;
 
-                card.StorySize = card.DeveloperSize > card.TestingSize ? card.DeveloperSize : card.TestingSize;
+                if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Developer).Any())
+                    card.DeveloperSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Developer).Max(v => v.Score);
+                
+                if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Any())
+                    card.TestingSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Max(v => v.Score);
+                
+                card.StorySize = card.Votes.Max(v => v.Score);
 
                 _gameContext.Update(card);
                 _gameContext.Update(game);
@@ -213,20 +219,20 @@ namespace PlanningPoker.Website.Controllers
 
             if (game?.ActiveCard != null && !game.ActiveCard.IsFinished)
             {
-                HandlePlayerVote(game.ActiveCard, player.PlayerType, size);
+                HandlePlayerVote(game.ActiveCard, player, size);
 
                 // Get latest version from DB
                 game = _gameContext.Games.FirstOrDefault(g => g.GameId == game.GameId);
             }
 
-            ViewBag.VotingComplete = game?.ActiveCard?.DeveloperVotes + game?.ActiveCard?.TestingVotes >= game?.Players.Count();
+            ViewBag.VotingComplete = game.ActiveCard?.Votes.Count >= game?.Players.Count();
             ViewBag.Player = player;
             ViewBag.Game = game;
 
             return View();
         }
 
-        private void HandlePlayerVote(Card card, PlayerType role, int size)
+        private void HandlePlayerVote(Card card, Player player, int size)
         {
             // This may be dangerous, but the best I can come up with ...
             while (card.IsLocked)
@@ -240,17 +246,22 @@ namespace PlanningPoker.Website.Controllers
             _gameContext.Update(card);
             _gameContext.SaveChanges();
 
-            if (role == PlayerType.Developer)
-            {
-                card.DeveloperSize = size > card.DeveloperSize ? size : card.DeveloperSize;
-                card.DeveloperVotes++;
-            }
-            else if (role == PlayerType.Tester)
-            {
-                card.TestingSize = size > card.TestingSize ? size : card.TestingSize;
-                card.TestingVotes++;
-            }
+            card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(c => c.CardId == card.CardId);
 
+            var vote = card.Votes.FirstOrDefault(v => v.Player.PlayerId == player.PlayerId);
+
+            if (vote == null)
+            {
+                vote = new Vote { Card = card, Player = player, Score = size, VoteId = Guid.NewGuid() };
+                card.Votes.Add(vote);
+                _gameContext.Add(vote);
+            }
+            else
+            {
+                vote.Score = size;
+                _gameContext.Update(vote);
+            }
+            
             // Release the lock and save the card
             card.IsLocked = false;
             _gameContext.Update(card);

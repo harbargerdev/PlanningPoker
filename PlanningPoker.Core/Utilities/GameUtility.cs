@@ -59,7 +59,8 @@ namespace PlanningPoker.Core.Utilities
                 CardNumber = string.Empty,
                 CardSource = string.Empty,
                 IsLocked = false,
-                IsFinished = false
+                IsFinished = false,
+                Votes = new List<Vote>()
             };
         }
 
