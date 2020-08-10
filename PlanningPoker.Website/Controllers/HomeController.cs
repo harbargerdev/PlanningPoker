@@ -81,7 +81,7 @@ namespace PlanningPoker.Website.Controllers
         public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId)
         {
             var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
-            var card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(c => c.CardId == cardId);
+            var card = _gameContext.Cards.Include(c => c.Votes).ThenInclude(v => v.Player).FirstOrDefault(c => c.CardId == cardId);
 
             if (card != null && game != null)
             {
