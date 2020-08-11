@@ -13,5 +13,12 @@ connection.on("VotingStatus", function (gameId, status) {
 });
 
 connection.start().then(function () {
-    console.log('Connection started, awaiting messages ...');
+    // console.log('Connection started, awaiting messages ...');
+    var cardNumber = document.getElementById('cardNumberTxtBox').value;
+    if (cardNumber !== "") {
+        var currentGame = document.getElementById('gameIdTextBox').value;
+        connection.invoke("SendMessage", currentGame, cardNumber).catch(function (err) {
+            return console.error(err.toString);
+        });
+    }
 });
