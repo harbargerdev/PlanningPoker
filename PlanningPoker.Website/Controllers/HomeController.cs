@@ -52,6 +52,15 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
+        public IActionResult GameMasterReturn([FromQuery] Guid playerId, [FromQuery] Guid gameId)
+        {
+            Player player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            Game game = _gameContext.Games.Include(g => g.GameMaster).Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
+
+            ViewBag.Game = game;
+            ViewBag.Player = player;
+            return View("GameMasterStart");
+        }
 
         public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber, [FromQuery] string cardSource)
         {
@@ -141,14 +150,14 @@ namespace PlanningPoker.Website.Controllers
 
             ViewBag.Game = game;
             ViewBag.Player = player;
-
             return View();
         }
 
-        public IActionResult SendGmStartEmail([FromQuery] string emailAddress, [FromQuery] string playerName, [FromQuery] Guid gameId)
+        public IActionResult SendGmStartEmail([FromQuery] string emailAddress, [FromQuery] Guid playerId, [FromQuery] Guid gameId)
         {
             var game = _gameContext.Games.FirstOrDefault(g => g.GameId == gameId);
-            _emailUtility.SendGameStartLinkEmail(emailAddress, playerName, game.GameName, gameId);
+            var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            _emailUtility.SendGameStartLinkEmail(emailAddress, player.PlayerName, game.GameName, playerId, gameId);
 
             return View("ThankYou");
         }

@@ -15,7 +15,7 @@ namespace PlanningPoker.Core.Utilities
         /// <param name="toAddress">The email to address</param>
         /// <param name="playerName">The user's name</param>
         /// <param name="gameId">The game id</param>
-        void SendGameStartLinkEmail(string toAddress, string playerName, string gameName, Guid gameId);
+        void SendGameStartLinkEmail(string toAddress, string playerName, string gameName, Guid playerId, Guid gameId);
 
         /// <summary>
         /// Method used to send an email that has the game summary
@@ -28,14 +28,14 @@ namespace PlanningPoker.Core.Utilities
     public class EmailUtility : IEmailUtility
     {
         /// <inheritdoc />
-        public void SendGameStartLinkEmail(string toAddress, string playerName, string gameName, Guid gameId)
+        public void SendGameStartLinkEmail(string toAddress, string playerName, string gameName, Guid playerId, Guid gameId)
         {
             StringBuilder sb = new StringBuilder();
 
             sb.Append("Hello " + playerName + ",<br/>");
             sb.Append("You setup a game and wanted to come back to it at a later point so here a link you can use to do so:<br/>");
-            sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/GameMasterStart?playerName=" + playerName +
-                        "&gameName=" + gameName + "&submitButton=Start+Game%21'>Game Start</a><br/><br/>");
+            sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/GameMasterReturn?playerId=" + playerId.ToString() +
+                        "&gameId=" + gameId.ToString() + "'>Game Start</a><br/><br/>");
             sb.Append("If you need a link for players to join, here is a link for them:<br/>");
             sb.Append("<a href='http://planningpoker.harbargerdev.com/Home/PlayerStart?gameId=" + gameId.ToString() + "'>Player Start</a><br/>");
             sb.Append("Thank you for your interest in playing an we look forward to you coming back to play.<br/>");
