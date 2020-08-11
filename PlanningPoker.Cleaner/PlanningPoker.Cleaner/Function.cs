@@ -28,7 +28,7 @@ namespace PlanningPoker.Cleaner
             int count = 0;
 
             var _context = new GameContext();
-            var yesterday = DateTime.Now.AddDays(-1);
+            var targetDate = DateTime.Now.AddDays(-7);
             
             // Get List of games older than yesterday
             var games = _context.Games
@@ -37,7 +37,7 @@ namespace PlanningPoker.Cleaner
                 .Include(g => g.GameMaster)
                 .Include(g => g.Players)
                 .ToList()
-                .Where(g => g.GameTime <= yesterday);
+                .Where(g => g.GameTime <= targetDate);
 
             foreach(var game in games)
             {
