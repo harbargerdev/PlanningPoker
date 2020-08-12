@@ -158,6 +158,10 @@ namespace PlanningPoker.Website.Controllers
 
             game.ActiveCard = card;
 
+            _gameContext.Update(card);
+            _gameContext.Update(game);
+            _gameContext.SaveChanges();
+
             ViewBag.Game = game;
             ViewBag.Card = card;
             return View("GameMasterZone");
