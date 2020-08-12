@@ -143,6 +143,30 @@ namespace PlanningPoker.Website.Controllers
             return View("GameMasterZone");
         }
 
+        public IActionResult GameMasterRevote([FromQuery] Guid gameId, [FromQuery] Guid cardId)
+        {
+            var game = _gameContext.Games.Include(g => g.Cards).Include(g => g.ActiveCard).FirstOrDefault(g => g.GameId == gameId);
+            var card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(c => c.CardId == cardId);
+
+            if (card != null)
+            {
+                card.IsLocked = false;
+                card.IsFinished = false;
+                card.DeveloperSize = card.DeveloperVotes = card.TestingSize = card.DeveloperVotes = card.StorySize = 0;
+                card.Votes = new List<Vote>();
+            }
+
+            game.ActiveCard = card;
+
+            _gameContext.Update(card);
+            _gameContext.Update(game);
+            _gameContext.SaveChanges();
+
+            ViewBag.Game = game;
+            ViewBag.Card = card;
+            return View("GameMasterZone");
+        }
+
         public IActionResult GameMasterStartEmail([FromQuery] Guid playerId, [FromQuery] Guid gameId)
         {
             var player = _gameContext.Players.FirstOrDefault(p => p.PlayerId == playerId);

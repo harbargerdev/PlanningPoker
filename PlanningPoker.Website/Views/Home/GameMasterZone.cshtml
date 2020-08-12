@@ -9,49 +9,28 @@
 <h3>Use the below form to create a card or edit the details. Click the close voting button to end voting. When you are ready for a new card, click the new card button.</h3>
 <br />
 <div>
-    <div style="position:absolute; width:45%;">
-        <form>
-            <table>
-                <tr>
-                    <td style="width:20%"></td>
-                    <td><input type="text" id="gameIdTextBox" name="gameId" value="@game.GameId" style="display:none" /></td>
-                </tr>
-                <tr>
-                    <td style="width:20%"></td>
-                    <td><input type="text" name="cardId" value="@card.CardId" style="display:none" /></td>
-                </tr>
-                <tr>
-                    <td>@Html.Label("Card Number: ")</td>
-                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" value="@card.CardNumber" /></td>
-                </tr>
-                <tr>
-                    <td>@Html.Label("Card Source: ")</td>
-                    <td><input type="text" name="cardSource" value="@card.CardSource" /></td>
-                </tr>
-                <tr>
-                    <td>@Html.Label("Developer Size: ")</td>
-                    <td><input type="text" name="" readonly="readonly" value="@card.DeveloperSize" /></td>
-                </tr>
-                <tr>
-                    <td>@Html.Label("Testing Size: ")</td>
-                    <td><input type="text" name="" readonly="readonly" value="@card.TestingSize" /></td>
-                </tr>
-                <tr>
-                    <td>@Html.Label("Card Size: ")</td>
-                    <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("GameMasterZone", "Home", new { gameId = game.GameId })'" />
-                    </td>
-                    <td>
-                        <button type="submit" name="submit" value="submit">Create Card</button>
-                        <!--<button type="submit" name="lock" value ="lock">Close Voting</button>-->
-                        <input type="button" id="finishButton" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
-                    </td>
-                </tr>
-            </table>
-        </form>
+    <div style="position: absolute; width: 45%;">
+        <h3>Voting Summary:</h3>
+        <h4>Development:</h4>
+        <ul>
+            @if (card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Developer).Any())
+            {
+                @foreach (var dv in card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Developer))
+                 {
+                     <li>Developer: @dv.Score points.</li>
+                 }
+            }
+        </ul>
+        <h4>Testing:</h4>
+        <ul>
+            @if (card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Tester).Any())
+            {
+                @foreach (var tv in card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Tester))
+                 {
+                     <li>Tester: @tv.Score points.</li>
+                 }
+            }
+        </ul>
         <span> History </span>
         <table>
             <tr>
@@ -77,27 +56,49 @@
         </form>
     </div>
     <div style="position:absolute; width:45%; right:0px;">
-        <h3>Voting Summary:</h3>
-        <h4>Development:</h4>
-        <ul>
-            @if (card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Developer).Any())
-            {
-                @foreach (var dv in card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Developer))
-                {
-                    <li>@dv.Player.PlayerName : @dv.Score points.</li>
-                }
-            }
-        </ul>
-        <h4>Testing:</h4>
-        <ul>
-            @if (card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Tester).Any())
-            {
-                @foreach (var tv in card.Votes.Where(v => v.Player.PlayerType == PlanningPoker.Core.Entities.PlayerType.Tester))
-                {
-                    <li>@tv.Player.PlayerName : @tv.Score points.</li>
-                }
-            }
-        </ul>
+        <form>
+            <table>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" id="gameIdTextBox" name="gameId" value="@game.GameId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" name="cardId" value="@card.CardId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Number: ")</td>
+                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" value="@card.CardNumber" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Source: ")</td>
+                    <td><input type="text" name="cardSource" value="@card.CardSource" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Developer Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.DeveloperSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Testing Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.TestingSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("GameMasterZone", "Home", new {gameId = game.GameId})'" />
+                    </td>
+                    <td>
+                        <button type="submit" name="submit" value="submit">Create Card</button>
+                        <!--<button type="submit" name="lock" value ="lock">Close Voting</button>-->
+                        <input type="button" id="finishButton" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
+                        <input type="button" id="revoteButton" title="Revote" value="Revote" onclick="location.href = '@Url.Action("GameMasterRevote", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
+                    </td>
+                </tr>
+            </table>
+        </form>
     </div>
 </div>
 <div>
