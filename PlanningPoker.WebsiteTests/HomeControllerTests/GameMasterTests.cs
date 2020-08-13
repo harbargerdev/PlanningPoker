@@ -299,6 +299,75 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             Assert.AreEqual(0, resultingCard.Votes.Count);
         }
 
+        [Test]
+        public void SendGmStartEmail_CallsEmailUtility()
+        {
+            // Arrange
+            var email = "something@email.com";
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var player = new Player { PlayerId = playerId, PlayerName = "Game Master", PlayerType = PlayerType.GameMaster };
+
+            gameContext.Add(game);
+            gameContext.Add(player);
+            gameContext.SaveChanges();
+
+            emailUtilityMock.Reset();
+            emailUtilityMock.Setup(eu => eu.SendGameStartLinkEmail(email, player.PlayerName, game.GameName, playerId, gameId));
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.SendGmStartEmail(email, playerId, gameId) as ViewResult;
+
+            // Assert
+            emailUtilityMock.Verify();
+            Assert.AreEqual("ThankYou", response.ViewName);
+        }
+
+        [Test]
+        public void GameMasterFinishEmail_PopulatesObjects()
+        {
+            // Arrange
+            var cards = new List<Card>();
+            for (int i = 0; i < 3; i++)
+            {
+                cards.Add(new Card { CardId = Guid.NewGuid() });
+            }
+            gameContext.AddRange(cards);
+
+            var players = new List<Player>();
+            for (int i=0; i < 3; i++)
+            {
+                players.Add(new Player { PlayerId = Guid.NewGuid(), PlayerType = PlayerType.Developer });
+            }
+            gameContext.AddRange(players);
+
+            var player = new Player { PlayerId = playerId, PlayerName = "Game Master", PlayerType = PlayerType.GameMaster };
+            gameContext.Add(player);
+
+            var game = new Game
+            {
+                GameId = gameId,
+                GameName = "Game Name",
+                GameTime = DateTime.Now,
+                GameMaster = player,
+                Players = players,
+                Cards = cards
+            };
+            gameContext.Add(game);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterFinishEmail(gameId) as ViewResult;
+
+            var output = response.ViewData["Game"] as Game;
+
+            // Assert
+            Assert.NotNull(output.Cards);
+            Assert.NotNull(output.GameMaster);
+            Assert.NotNull(output.Players);
+        }
+
         private List<Vote> GenerateDeveloperVotes(int count, Card card, int size)
         {
             List<Vote> votes = new List<Vote>();
