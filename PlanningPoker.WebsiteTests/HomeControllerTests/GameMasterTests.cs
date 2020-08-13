@@ -368,6 +368,52 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             Assert.NotNull(output.Players);
         }
 
+        [Test]
+        public void SendGmSummaryEmail_CallEmailUtilityAndReturnsView()
+        {
+            // Arrange
+            var email = "something@email.com";
+            var cards = new List<Card>();
+            for (int i = 0; i < 3; i++)
+            {
+                cards.Add(new Card { CardId = Guid.NewGuid() });
+            }
+            gameContext.AddRange(cards);
+
+            var players = new List<Player>();
+            for (int i = 0; i < 3; i++)
+            {
+                players.Add(new Player { PlayerId = Guid.NewGuid(), PlayerType = PlayerType.Developer });
+            }
+            gameContext.AddRange(players);
+
+            var player = new Player { PlayerId = playerId, PlayerName = "Game Master", PlayerType = PlayerType.GameMaster };
+            gameContext.Add(player);
+
+            var game = new Game
+            {
+                GameId = gameId,
+                GameName = "Game Name",
+                GameTime = DateTime.Now,
+                GameMaster = player,
+                Players = players,
+                Cards = cards
+            };
+            gameContext.Add(game);
+            gameContext.SaveChanges();
+
+            emailUtilityMock.Reset();
+            emailUtilityMock.Setup(eu => eu.SendGameSummaryEmail(email, game));
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.SendGmSummaryEmail(email, gameId) as ViewResult;
+
+            // Assert
+            emailUtilityMock.Verify();
+            Assert.AreEqual("ThankYou", response.ViewName);
+        }
+
         private List<Vote> GenerateDeveloperVotes(int count, Card card, int size)
         {
             List<Vote> votes = new List<Vote>();
