@@ -91,7 +91,7 @@
                         <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("GameMasterZone", "Home", new {gameId = game.GameId})'" />
                     </td>
                     <td>
-                        <button type="submit" name="submit" value="submit">Create Card</button>
+                        <button type="submit" name="submit" value="submit">Update Card</button>
                         <!--<button type="submit" name="lock" value ="lock">Close Voting</button>-->
                         <input type="button" id="finishButton" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
                         <input type="button" id="revoteButton" title="Revote" value="Revote" onclick="location.href = '@Url.Action("GameMasterRevote", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
