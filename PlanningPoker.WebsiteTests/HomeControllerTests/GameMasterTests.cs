@@ -17,6 +17,9 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 {
     public class GameMasterTests
     {
+        Guid playerId;
+        Guid gameId;
+        Guid cardId;
         Mock<ILogger<HomeController>> loggerMock = null;
         Mock<IGameUtility> gameUtilityMock = null;
         Mock<IEmailUtility> emailUtilityMock = null;
@@ -28,6 +31,10 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             loggerMock = new Mock<ILogger<HomeController>>();
             gameUtilityMock = new Mock<IGameUtility>();
             emailUtilityMock = new Mock<IEmailUtility>();
+
+            playerId = Guid.NewGuid();
+            gameId = Guid.NewGuid();
+            cardId = Guid.NewGuid();
 
             // DB Context Setup
             var options = new DbContextOptionsBuilder<GameContext>()
@@ -58,7 +65,7 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             // Act
             var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
             var response = controller.GameMasterStart(playerName, gameName) as ViewResult;
-            
+
             // Assert
             gameUtilityMock.Verify();
             Assert.AreEqual(_gameReturned, response.ViewData["Game"]);
@@ -68,9 +75,6 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
         public void GameMasterReturn_ReturnsPlayerAndGameView()
         {
             // Arrange
-            var playerId = Guid.NewGuid();
-            var gameId = Guid.NewGuid();
-
             var player = new Player { PlayerId = playerId, PlayerName = "Game Master", PlayerType = PlayerType.GameMaster };
             var game = new Game
             {
@@ -93,6 +97,244 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             Assert.AreEqual("GameMasterStart", response.ViewName);
             Assert.AreEqual(player, response.ViewData["Player"]);
             Assert.AreEqual(game, response.ViewData["Game"]);
+        }
+
+        [Test]
+        public void GameMasterZone_ExecutesNewCardMethod()
+        {
+            // Arrange
+            var game = new Game
+            {
+                GameId = gameId,
+                GameName = "Game Name",
+                GameTime = DateTime.Now
+            };
+            var card = new Card
+            {
+                CardId = cardId,
+                StorySize = 0,
+                DeveloperSize = 0,
+                TestingSize = 0,
+                DeveloperVotes = 0,
+                TestingVotes = 0,
+                CardNumber = string.Empty,
+                CardSource = string.Empty,
+                IsLocked = false,
+                IsFinished = false,
+                Votes = new List<Vote>()
+            };
+
+            gameContext.Add(game);
+            gameContext.SaveChanges();
+
+            gameUtilityMock.Reset();
+            gameUtilityMock.Setup(gu => gu.InitializeCardForGame()).Returns(card);
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterZone(gameId, Guid.Empty, null, null) as ViewResult;
+
+            // Assert
+            gameUtilityMock.Verify();
+            Assert.AreEqual(card, response.ViewData["Card"]);
+        }
+
+        [Test]
+        public void GameMasterZone_ExecuteExistingCard()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var card = new Card
+            {
+                CardId = cardId,
+                StorySize = 0,
+                DeveloperSize = 0,
+                TestingSize = 0,
+                DeveloperVotes = 0,
+                TestingVotes = 0,
+                CardNumber = string.Empty,
+                CardSource = string.Empty,
+                IsLocked = false,
+                IsFinished = false,
+                Votes = new List<Vote>()
+            };
+
+            gameContext.Add(game);
+            gameContext.Add(card);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterZone(gameId, cardId, "Card Number", "Card Source") as ViewResult;
+
+            // Assert
+            card.CardNumber = "Card Number";
+            card.CardSource = "Card Source";
+            game.ActiveCard = card;
+            Assert.AreEqual(card, response.ViewData["Card"]);
+            Assert.AreEqual(game, response.ViewData["Game"]);
+        }
+
+        [Test]
+        public void GameMasterFinalizeVoting_NoTestingVotes()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var card = new Card { CardId = cardId };
+            
+            gameContext.Add(game);
+            gameContext.Add(card);
+            gameContext.SaveChanges();
+
+            var votes = GenerateDeveloperVotes(3, card, 5);
+            card.Votes = votes;
+
+            gameContext.AddRange(votes);
+            gameContext.Update(card);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var resultedCard = response.ViewData["Card"] as Card;
+
+            // Assert
+            Assert.AreEqual(5, resultedCard.DeveloperSize);
+            Assert.AreEqual(0, resultedCard.TestingSize);
+            Assert.AreEqual(5, resultedCard.StorySize);
+        }
+
+        [Test]
+        public void GameMasterFinalizeVoting_NoDeveloperVotes()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var card = new Card { CardId = cardId };
+
+            gameContext.Add(game);
+            gameContext.Add(card);
+            gameContext.SaveChanges();
+
+            var votes = GenerateTesterVotes(3, card, 5);
+            card.Votes = votes;
+
+            gameContext.AddRange(votes);
+            gameContext.Update(card);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var resultedCard = response.ViewData["Card"] as Card;
+
+            // Assert
+            Assert.AreEqual(0, resultedCard.DeveloperSize);
+            Assert.AreEqual(5, resultedCard.TestingSize);
+            Assert.AreEqual(5, resultedCard.StorySize);
+        }
+
+        [Test]
+        public void GameMasterFinalizeVoting_DeveloperAndTesterVotes()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var card = new Card { CardId = cardId, Votes = new List<Vote>() };
+
+            gameContext.Add(game);
+            gameContext.Add(card);
+            gameContext.SaveChanges();
+
+            var devVotes = GenerateDeveloperVotes(3, card, 8);
+            var testVotes = GenerateTesterVotes(3, card, 5);
+            card.Votes.AddRange(devVotes);
+            card.Votes.AddRange(testVotes);
+
+            gameContext.AddRange(devVotes);
+            gameContext.AddRange(testVotes);
+            gameContext.Update(card);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var resultedCard = response.ViewData["Card"] as Card;
+
+            // Assert
+            Assert.AreEqual(8, resultedCard.DeveloperSize);
+            Assert.AreEqual(5, resultedCard.TestingSize);
+            Assert.AreEqual(8, resultedCard.StorySize);
+        }
+
+        [Test]
+        public void GameMasterRevote_ResetsVotes()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, GameName = "Game Name", GameTime = DateTime.Now };
+            var card = new Card { CardId = cardId, Votes = new List<Vote>(), DeveloperSize = 5, TestingSize = 5, StorySize = 5 };
+
+            gameContext.Add(game);
+            gameContext.Add(card);
+            gameContext.SaveChanges();
+            
+            var devVotes = GenerateDeveloperVotes(3, card, 5);
+            var testVotes = GenerateTesterVotes(3, card, 5);
+            card.Votes.AddRange(devVotes);
+            card.Votes.AddRange(testVotes);
+
+            gameContext.AddRange(devVotes);
+            gameContext.AddRange(testVotes);
+            gameContext.Update(card);
+            gameContext.SaveChanges();
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterRevote(gameId, cardId) as ViewResult;
+
+            var resultingCard = response.ViewData["Card"] as Card;
+
+            // Assert
+            Assert.AreEqual(0, resultingCard.DeveloperSize);
+            Assert.AreEqual(0, resultingCard.TestingSize);
+            Assert.AreEqual(0, resultingCard.StorySize);
+            Assert.AreEqual(0, resultingCard.Votes.Count);
+        }
+
+        private List<Vote> GenerateDeveloperVotes(int count, Card card, int size)
+        {
+            List<Vote> votes = new List<Vote>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var vote = new Vote
+                {
+                    Card = card,
+                    Player = new Player { PlayerId = Guid.NewGuid(), PlayerName = "Developer", PlayerType = PlayerType.Developer },
+                    Score = size,
+                    VoteId = Guid.NewGuid()
+                };
+                votes.Add(vote);
+            }
+
+            return votes;
+        }
+
+        private List<Vote> GenerateTesterVotes(int count, Card card, int size)
+        {
+            List<Vote> votes = new List<Vote>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var vote = new Vote
+                {
+                    Card = card,
+                    Player = new Player { PlayerId = Guid.NewGuid(), PlayerName = "Tester", PlayerType = PlayerType.Tester },
+                    Score = size,
+                    VoteId = Guid.NewGuid()
+                };
+                votes.Add(vote);
+            }
+
+            return votes;
         }
     }
 }
