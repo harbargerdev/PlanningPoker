@@ -5,6 +5,13 @@ namespace PlanningPoker.Website.Data
 {
     public class GameContext : DbContext
     {
+        private DbContextOptions<GameContext> options;
+
+        public GameContext(DbContextOptions<GameContext> options)
+        {
+            this.options = options;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;Database=planningpoker;uid=planningpoker;pwd=Moxqzqyd47;");
