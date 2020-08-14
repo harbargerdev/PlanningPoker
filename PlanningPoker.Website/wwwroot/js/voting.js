@@ -13,7 +13,7 @@ connection.on("VotingStatus", function (gameId, status) {
 });
 
 connection.start().then(function () {
-    // console.log('Connection started, awaiting messages ...');
+    setTimeout(() => { document.getElementById("finishButton").disabled = false; }, 300000);
     var cardNumber = document.getElementById('cardNumberTxtBox').value;
     if (cardNumber !== "") {
         var currentGame = document.getElementById('gameIdTextBox').value;
