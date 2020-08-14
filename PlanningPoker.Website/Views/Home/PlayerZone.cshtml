@@ -51,10 +51,10 @@
         <tr>
             <td>
                 <input type="text" id="gameId" name="gameId" value="@game.GameId" style="display: none"/>
-                <input type="text" name="playerId" value="@player.PlayerId" style="display: none" />
+                <input type="text" id="playerId" name="playerId" value="@player.PlayerId" style="display: none" />
                 <input type="text" id="votingFinished" name="VotingFinished" value="@votingComplete" style="display: none" />
             </td>
-            <td><input type="submit" value="Submit" /></td>
+            <td><input type="submit" value="Submit" onclick="submitForm()" /></td>
         </tr>
     </table>
 </form>
@@ -72,6 +72,22 @@
             span.appendChild(text);
         }
     });
+
+    function submitForm() {
+        var gameId = document.getElementById('gameId').value;
+        var playerId = document.getElementById('playerId').value;
+        var size;
+        var sizes = document.getElementsByName('size');
+        for (i = 0; i < sizes.length; i++) {
+            if (sizes[i].checked)
+                size = sizes[i].value;
+        }
+
+        connection.invoke("SendMessage", gameId, playerId).catch(function (err) {
+            return console.error(err.toString());
+        });
+        window.location.replace("~/Home/PlayerZone?gameId=" + gameId + "&playerId=" + playerId + "&size=" + size);
+    }
 
     $(document).ready(function () {
         var status = document.getElementById('votingFinished').value;
