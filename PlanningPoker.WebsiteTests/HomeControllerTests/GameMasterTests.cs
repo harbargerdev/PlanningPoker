@@ -15,6 +15,7 @@ using System.Text;
 
 namespace PlanningPoker.WebsiteTests.HomeControllerTests
 {
+    [TestFixture]
     public class GameMasterTests
     {
         Guid playerId;
