@@ -146,7 +146,8 @@ namespace PlanningPoker.Website.Controllers
                 if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Any())
                     card.TestingSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Max(v => v.Score);
                 
-                card.StorySize = card.Votes.Max(v => v.Score);
+                if (card.Votes.Any())
+                    card.StorySize = card.Votes.Max(v => v.Score);
 
                 _gameContext.Update(card);
                 _gameContext.Update(game);
