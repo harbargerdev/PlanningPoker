@@ -209,7 +209,7 @@ namespace PlanningPoker.Website.Controllers
 
             ViewBag.Game = game;
             ViewBag.Card = card;
-            return View("GameMasterZone");
+            return View("GameMasterVoting");
         }
 
         public IActionResult GameMasterStartEmail([FromQuery] Guid playerId, [FromQuery] Guid gameId)
