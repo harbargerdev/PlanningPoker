@@ -129,7 +129,7 @@ namespace PlanningPoker.Website.Controllers
             return View();
         }
 
-        public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId)
+        public IActionResult GameMasterFinalizeVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] int? storySize)
         {
             var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
             var card = _gameContext.Cards.Include(c => c.Votes).ThenInclude(v => v.Player).FirstOrDefault(c => c.CardId == cardId);
@@ -145,9 +145,11 @@ namespace PlanningPoker.Website.Controllers
                 
                 if (card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Any())
                     card.TestingSize = card.Votes.Where(v => v.Player.PlayerType == PlayerType.Tester).Max(v => v.Score);
-                
-                if (card.Votes.Any())
+
+                if (card.Votes.Any() && storySize == null)
                     card.StorySize = card.Votes.Max(v => v.Score);
+                else if (storySize.HasValue)
+                    card.StorySize = storySize.Value;
 
                 _gameContext.Update(card);
                 _gameContext.Update(game);
