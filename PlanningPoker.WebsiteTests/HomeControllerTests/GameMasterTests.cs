@@ -196,7 +196,7 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 
             // Act
             var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
-            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId, null) as ViewResult;
             var resultedCard = response.ViewData["Card"] as Card;
 
             // Assert
@@ -225,7 +225,7 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 
             // Act
             var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
-            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId, null) as ViewResult;
             var resultedCard = response.ViewData["Card"] as Card;
 
             // Assert
@@ -257,7 +257,7 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 
             // Act
             var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
-            var response = controller.GameMasterFinalizeVoting(gameId, cardId) as ViewResult;
+            var response = controller.GameMasterFinalizeVoting(gameId, cardId, null) as ViewResult;
             var resultedCard = response.ViewData["Card"] as Card;
 
             // Assert
