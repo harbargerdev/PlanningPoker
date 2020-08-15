@@ -65,7 +65,9 @@
 
     connection.on("VotingStatus", function (gameId, card) {
         var currentGame = document.getElementById("gameId").value;
-        if (currentGame === gameId && card !== "complete") {
+        var regex = /[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}/i;
+        var match = regex.exec(card);
+        if (currentGame === gameId && !match) {
             var span = document.getElementById('activeCardSection');
             span.textContent = "";
             var text = document.createTextNode('Active Card: ' + card);
