@@ -51,7 +51,7 @@
         <tr>
             <td>
                 <input type="text" id="gameId" name="gameId" value="@game.GameId" style="display: none"/>
-                <input type="text" id="playerId" name="playerId" value="@player.PlayerId" style="display: none" />
+                <input type="text" id="playerIdTxtBox" name="playerId" value="@player.PlayerId" style="display: none" />
                 <input type="text" id="votingFinished" name="VotingFinished" value="@votingComplete" style="display: none" />
             </td>
             <td><input type="submit" value="Submit" onclick="submitForm()" /></td>
@@ -75,12 +75,14 @@
 
     function submitForm() {
         var gameId = document.getElementById('gameId').value;
-        var playerId = document.getElementById('playerId').value;
+        var playerId = document.getElementById('playerIdTxtBox').value;
         var size;
         var sizes = document.getElementsByName('size');
         for (i = 0; i < sizes.length; i++) {
-            if (sizes[i].checked)
+            if (sizes[i].checked) {
                 size = sizes[i].value;
+                break;
+            }
         }
 
         connection.invoke("SendMessage", gameId, playerId).catch(function (err) {
@@ -89,15 +91,5 @@
         window.location.replace("~/Home/PlayerZone?gameId=" + gameId + "&playerId=" + playerId + "&size=" + size);
     }
 
-    $(document).ready(function () {
-        var status = document.getElementById('votingFinished').value;
-        if (status === "True") {
-            var gameId = document.getElementById('gameId').value;
-            connection.start().then(function () {
-                connection.invoke("SendMessage", gameId, "complete").catch(function (err) {
-                    return console.error(err.toString());
-                });
-            });
-        }
-    });
+    connection.start();
 </script>
