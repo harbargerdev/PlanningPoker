@@ -37,7 +37,6 @@ namespace PlanningPoker.Website.Controllers
 
         #region Game Master Methods
 
-        
         public IActionResult GameMasterStart([FromQuery] string playerName, [FromQuery] string gameName)
         {
             Player gameMaster = new Player { PlayerId = Guid.NewGuid(), PlayerName = playerName, PlayerType = PlayerType.GameMaster };
@@ -98,6 +97,7 @@ namespace PlanningPoker.Website.Controllers
 
             _gameContext.Update(game);
             _gameContext.Update(card);
+            _gameContext.SaveChanges();
 
             ViewBag.Card = card;
             ViewBag.Game = game;
