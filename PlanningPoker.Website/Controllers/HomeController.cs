@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -60,6 +60,48 @@ namespace PlanningPoker.Website.Controllers
             ViewBag.Game = game;
             ViewBag.Player = player;
             return View("GameMasterStart");
+        }
+
+        public IActionResult SetupCard([FromQuery] Guid gameId)
+        {
+            var game = _gameContext.Games.Include(g => g.Cards).FirstOrDefault(g => g.GameId == gameId);
+
+            var card = new Card();
+
+            if (game != null)
+            {
+                if (game.Cards == null)
+                    game.Cards = new List<Card>();
+
+                card = _gameUtility.InitializeCardForGame();
+                game.Cards.Add(card);
+
+                _gameContext.Add(card);
+                _gameContext.Update(game);
+                _gameContext.SaveChanges();
+            }
+
+            ViewBag.Game = game;
+            ViewBag.Card = card;
+            return View("GameMasterSetupCard");
+        }
+
+        public IActionResult GameMasterVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardName, [FromQuery] string cardSource)
+        {
+            var game = _gameContext.Games.Include(g => g.Cards).Include(g => g.ActiveCard).ThenInclude(ac => ac.Votes).FirstOrDefault(g => g.GameId == gameId);
+            var card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(card => card.CardId == cardId);
+
+            card.CardNumber = cardName;
+            card.CardSource = cardSource;
+
+            game.ActiveCard = card;
+
+            _gameContext.Update(game);
+            _gameContext.Update(card);
+
+            ViewBag.Card = card;
+            ViewBag.Game = game;
+            return View("GameMasterVoting");
         }
 
         public IActionResult GameMasterZone([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber, [FromQuery] string cardSource)
