@@ -415,6 +415,61 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
             Assert.AreEqual("ThankYou", response.ViewName);
         }
 
+        [Test]
+        public void SetupCard_ReturnsCardInViewBag()
+        {
+            // Arrange
+            var game = new Game { GameId = gameId, Cards = new List<Card>() };
+            gameContext.Add(game);
+            gameContext.SaveChanges();
+
+            var card = new Card { CardId = cardId };
+
+            gameUtilityMock.Reset();
+            gameUtilityMock.Setup(gu => gu.InitializeCardForGame()).Returns(card);
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.SetupCard(gameId) as ViewResult;
+
+            var responseCard = response.ViewData["Card"] as Card;
+            var responseGame = response.ViewData["Game"] as Game;
+
+            // Assert
+            gameUtilityMock.Verify();
+            Assert.AreEqual(card, responseCard);
+            Assert.NotNull(responseGame);
+            Assert.AreEqual("GameMasterSetupCard", response.ViewName);
+        }
+
+        [Test]
+        public void GameMasterVoting_UpdatesCardAndReturnsFullObjects()
+        {
+            // Arrange
+            var player = new Player { PlayerId = playerId };
+            var game = new Game { GameId = gameId, Players = new List<Player> { player } };
+            var card = new Card { CardId = cardId };
+            gameContext.Add(player);
+            gameContext.Add(card);
+            gameContext.Add(game);
+            gameContext.SaveChanges();
+
+            string cardName = "Card";
+            string cardSource = "Source";
+
+            // Act
+            var controller = new HomeController(loggerMock.Object, gameUtilityMock.Object, emailUtilityMock.Object, gameContext);
+            var response = controller.GameMasterVoting(gameId, cardId, cardName, cardSource) as ViewResult;
+
+            var responseGame = response.ViewData["Game"] as Game;
+            var responseCard = response.ViewData["Card"] as Card;
+
+            // Assert
+            Assert.NotNull(responseGame.Players);
+            Assert.AreEqual(cardName, responseCard.CardNumber);
+            Assert.AreEqual(cardSource, responseCard.CardSource);
+        }
+
         private List<Vote> GenerateDeveloperVotes(int count, Card card, int size)
         {
             List<Vote> votes = new List<Vote>();
