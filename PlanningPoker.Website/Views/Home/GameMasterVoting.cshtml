@@ -1,0 +1,70 @@
+﻿@model PlanningPoker.Core.Entities.Game
+@{
+    ViewData["Title"] = "Game Master Voting";
+    PlanningPoker.Core.Entities.Card card = ViewBag.Card;
+    PlanningPoker.Core.Entities.Game game = ViewBag.Game;
+}
+
+<div id="instructionsDiv">
+    <h1>Game Master Voting</h1>
+    <h5>Watch the status of the votes come in, once they have all come in, hit the Finish button to view the results.</h5>
+</div>
+<div>
+    <div style="position: absolute; width: 45%;">
+        <h4>Pending Votes:</h4>
+        @if (game.Players != null)
+        {
+            <ul>
+                @foreach (var player in game.Players)
+                {
+                    @if (!card.Votes.Where(v => v.Player == player).Any())
+                    {
+                        <li id="@player.PlayerId">@player.PlayerName - @player.PlayerType</li>
+                    }
+                }
+            </ul>
+        }
+    </div>
+    <div style="position:absolute; width:45%; right:0px;">
+        <form>
+            <table>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" id="gameIdTextBox" name="gameId" value="@game.GameId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" name="cardId" value="@card.CardId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Number: ")</td>
+                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" value="@card.CardNumber" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Source: ")</td>
+                    <td><input type="text" name="cardSource" value="@card.CardSource" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Developer Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.DeveloperSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Testing Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.TestingSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="button" id="finishButton" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<script type="module" src="~/js/voting.js"></script>
