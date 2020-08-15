@@ -86,12 +86,12 @@ namespace PlanningPoker.Website.Controllers
             return View("GameMasterSetupCard");
         }
 
-        public IActionResult GameMasterVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardName, [FromQuery] string cardSource)
+        public IActionResult GameMasterVoting([FromQuery] Guid gameId, [FromQuery] Guid cardId, [FromQuery] string cardNumber, [FromQuery] string cardSource)
         {
-            var game = _gameContext.Games.Include(g => g.Cards).Include(g => g.ActiveCard).ThenInclude(ac => ac.Votes).FirstOrDefault(g => g.GameId == gameId);
+            var game = _gameContext.Games.Include(g => g.Cards).Include(g => g.ActiveCard).ThenInclude(ac => ac.Votes).Include(g => g.Players).FirstOrDefault(g => g.GameId == gameId);
             var card = _gameContext.Cards.Include(c => c.Votes).FirstOrDefault(card => card.CardId == cardId);
 
-            card.CardNumber = cardName;
+            card.CardNumber = cardNumber;
             card.CardSource = cardSource;
 
             game.ActiveCard = card;
