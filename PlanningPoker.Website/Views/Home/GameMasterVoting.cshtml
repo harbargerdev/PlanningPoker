@@ -19,7 +19,7 @@
                 {
                     @if (!card.Votes.Where(v => v.Player == player).Any())
                     {
-                        <li id="@player.PlayerId">@player.PlayerName - @player.PlayerType</li>
+                        <li id="@player.PlayerId" style="display: normal;">@player.PlayerName - @player.PlayerType</li>
                     }
                 }
             </ul>
@@ -67,4 +67,27 @@
     </div>
 </div>
 
-<script type="module" src="~/js/voting.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").configureLogging(signalR.LogLevel.Information).build();
+
+    connection.on("VotingStatus", function (gameId, playerId) {
+        var currentGame = document.getElementById('gameIdTextBox').value;
+        var currentCard = document.getElementById('cardNumberTxtBox').value;
+        if (gameId === currentGame && playerId !== currentCard) {
+            var player = document.getElementById(playerId);
+            player.style.display = "none";
+        }
+    });
+
+    connection.start().then(function () {
+        var cardNumber = document.getElementById('cardNumberTxtBox').value;
+        if (cardNumber !== "") {
+            var currentGame = document.getElementById('gameIdTextBox').value;
+            connection.invoke("SendMessage", currentGame, cardNumber).catch(function (err) {
+                return console.error(err.toString);
+            });
+        }
+    });
+</script>
