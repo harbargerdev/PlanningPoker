@@ -5,8 +5,11 @@
     PlanningPoker.Core.Entities.Game game = ViewBag.Game;
 }
 
-<h1>Game Master Admin</h1>
-<h3>Use the below form to create a card or edit the details. Click the close voting button to end voting. When you are ready for a new card, click the new card button.</h3>
+<h1>Voting Results</h1>
+<h5>
+    Below are the results of this round of voting. By default the overall score is from taking the largest size, if you feel like that
+    doesn't work or isn't right, update the score and hit the "Update Final Score" button.
+</h5>
 <br />
 <div>
     <div style="position: absolute; width: 45%;">
@@ -56,7 +59,7 @@
         </form>
     </div>
     <div style="position:absolute; width:45%; right:0px;">
-        <form>
+        <form action="~/Home/GameMasterFinalizeVoting">
             <table>
                 <tr>
                     <td style="width: 20%"></td>
@@ -68,11 +71,11 @@
                 </tr>
                 <tr>
                     <td>@Html.Label("Card Number: ")</td>
-                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" value="@card.CardNumber" /></td>
+                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" readonly="readonly" value="@card.CardNumber" /></td>
                 </tr>
                 <tr>
                     <td>@Html.Label("Card Source: ")</td>
-                    <td><input type="text" name="cardSource" value="@card.CardSource" /></td>
+                    <td><input type="text" name="cardSource" readonly="readonly" value="@card.CardSource" /></td>
                 </tr>
                 <tr>
                     <td>@Html.Label("Developer Size: ")</td>
@@ -84,16 +87,14 @@
                 </tr>
                 <tr>
                     <td>@Html.Label("Card Size: ")</td>
-                    <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
+                    <td><input type="text" name="storySize" id="storySize" value="@card.StorySize" /></td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("GameMasterZone", "Home", new {gameId = game.GameId})'" />
+                        <input type="button" title="New Card" value="New Card" onclick="location.href = '@Url.Action("SetupCard", "Home", new {gameId = game.GameId})'" />
                     </td>
                     <td>
-                        <button type="submit" name="submit" value="submit">Update Card</button>
-                        <!--<button type="submit" name="lock" value ="lock">Close Voting</button>-->
-                        <input type="button" id="finishButton" title="Finish" value="Finish" onclick="location.href = '@Url.Action("GameMasterFinalizeVoting", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
+                        <button type="submit" name="update" id="updateButton">Update Final Score</button>
                         <input type="button" id="revoteButton" title="Revote" value="Revote" onclick="location.href = '@Url.Action("GameMasterRevote", "Home", new {gameId = game.GameId, cardId = card.CardId})'" />
                     </td>
                 </tr>
@@ -101,7 +102,3 @@
         </form>
     </div>
 </div>
-<div>
-    
-</div>
-<script type="module" src="~/js/voting.js"></script>

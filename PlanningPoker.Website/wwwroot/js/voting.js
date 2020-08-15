@@ -2,18 +2,15 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/votehub").build();
 
-// disable finalize button
-document.getElementById("finishButton").disabled = true;
-
-connection.on("VotingStatus", function (gameId, status) {
-    var currentGame = document.getElementById("gameIdTextBox").value;
-    if (gameId === currentGame && status === "complete") {
-        document.getElementById("finishButton").disabled = false;
+connection.on("VotingStatus", function (gameId, playerId) {
+    var currentGame = document.getElementById('gameIdTextBox').value;
+    if (gameId === currentGame) {
+        var player = document.getElementById(playerId);
+        player.style.display = "none";
     }
 });
 
 connection.start().then(function () {
-    // console.log('Connection started, awaiting messages ...');
     var cardNumber = document.getElementById('cardNumberTxtBox').value;
     if (cardNumber !== "") {
         var currentGame = document.getElementById('gameIdTextBox').value;

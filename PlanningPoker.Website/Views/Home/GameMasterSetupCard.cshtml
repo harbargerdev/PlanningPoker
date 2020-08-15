@@ -1,0 +1,65 @@
+﻿@model PlanningPoker.Core.Entities.Game
+@{ 
+    ViewData["Title"] = "Setup a Card";
+    PlanningPoker.Core.Entities.Card card = ViewBag.Card;
+    PlanningPoker.Core.Entities.Game game = ViewBag.Game;
+}
+
+<div id="instructionsDiv">
+    <h1>Game Master Card Setup</h1>
+    <h5>Enter the card number, card source, and hit the submit button to open the card for votes.</h5>
+</div>
+<div>
+    <div style="position: absolute; width: 45%;">
+        <h5>Completed Cards:</h5>
+        <ul>
+            @foreach (var c in game.Cards)
+            {
+                @if (c != card)
+                {
+                    <li>@c.CardNumber : @c.StorySize points.</li>
+                }
+            }
+        </ul>
+    </div>
+    <div style="position: absolute; width: 45%; right: 0px;">
+        <form action="~/Home/GameMasterVoting">
+            <table>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" id="gameIdTextBox" name="gameId" value="@game.GameId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td style="width: 20%"></td>
+                    <td><input type="text" name="cardId" value="@card.CardId" style="display: none" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Number: ")</td>
+                    <td><input type="text" id="cardNumberTxtBox" name="cardNumber" value="@card.CardNumber" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Source: ")</td>
+                    <td><input type="text" name="cardSource" value="@card.CardSource" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Developer Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.DeveloperSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Testing Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.TestingSize" /></td>
+                </tr>
+                <tr>
+                    <td>@Html.Label("Card Size: ")</td>
+                    <td><input type="text" name="" readonly="readonly" value="@card.StorySize" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="submit" name="submit" value="submit">Start Voting</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
