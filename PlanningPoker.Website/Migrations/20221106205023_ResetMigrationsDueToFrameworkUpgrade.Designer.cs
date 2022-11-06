@@ -6,30 +6,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlanningPoker.Website.Data;
 
+#nullable disable
+
 namespace PlanningPoker.Website.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20200730132045_AddingActiveCardToGame")]
-    partial class AddingActiveCardToGame
+    [Migration("20221106205023_ResetMigrationsDueToFrameworkUpgrade")]
+    partial class ResetMigrationsDueToFrameworkUpgrade
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Card", b =>
                 {
-                    b.Property<byte[]>("CardId")
+                    b.Property<Guid>("CardId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("CardNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CardSource")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("DeveloperSize")
                         .HasColumnType("int");
@@ -37,11 +39,14 @@ namespace PlanningPoker.Website.Migrations
                     b.Property<int>("DeveloperVotes")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("GameId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid?>("GameId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsLocked")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("StorySize")
                         .HasColumnType("int");
@@ -61,21 +66,21 @@ namespace PlanningPoker.Website.Migrations
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Game", b =>
                 {
-                    b.Property<byte[]>("GameId")
+                    b.Property<Guid>("GameId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("ActiveCardCardId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid?>("ActiveCardCardId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("GameMasterPlayerId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid?>("GameMasterPlayerId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("GameName")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("GameTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("GameId");
 
@@ -88,15 +93,15 @@ namespace PlanningPoker.Website.Migrations
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Player", b =>
                 {
-                    b.Property<byte[]>("PlayerId")
+                    b.Property<Guid>("PlayerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("GameId")
-                        .HasColumnType("varbinary(16)");
+                    b.Property<Guid?>("GameId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("PlayerName")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("PlayerType")
                         .HasColumnType("int");
@@ -106,6 +111,30 @@ namespace PlanningPoker.Website.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Players");
+                });
+
+            modelBuilder.Entity("PlanningPoker.Core.Entities.Vote", b =>
+                {
+                    b.Property<Guid>("VoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("CardId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("PlayerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("VoteId");
+
+                    b.HasIndex("CardId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Card", b =>
@@ -124,6 +153,10 @@ namespace PlanningPoker.Website.Migrations
                     b.HasOne("PlanningPoker.Core.Entities.Player", "GameMaster")
                         .WithMany()
                         .HasForeignKey("GameMasterPlayerId");
+
+                    b.Navigation("ActiveCard");
+
+                    b.Navigation("GameMaster");
                 });
 
             modelBuilder.Entity("PlanningPoker.Core.Entities.Player", b =>
@@ -131,6 +164,33 @@ namespace PlanningPoker.Website.Migrations
                     b.HasOne("PlanningPoker.Core.Entities.Game", null)
                         .WithMany("Players")
                         .HasForeignKey("GameId");
+                });
+
+            modelBuilder.Entity("PlanningPoker.Core.Entities.Vote", b =>
+                {
+                    b.HasOne("PlanningPoker.Core.Entities.Card", "Card")
+                        .WithMany("Votes")
+                        .HasForeignKey("CardId");
+
+                    b.HasOne("PlanningPoker.Core.Entities.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId");
+
+                    b.Navigation("Card");
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("PlanningPoker.Core.Entities.Card", b =>
+                {
+                    b.Navigation("Votes");
+                });
+
+            modelBuilder.Entity("PlanningPoker.Core.Entities.Game", b =>
+                {
+                    b.Navigation("Cards");
+
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }

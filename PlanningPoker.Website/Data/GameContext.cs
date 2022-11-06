@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlanningPoker.Core.Entities;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace PlanningPoker.Website.Data
 {
@@ -14,7 +15,7 @@ namespace PlanningPoker.Website.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;Database=planningpoker;uid=planningpoker;pwd=Moxqzqyd47;");
+            optionsBuilder.UseMySql("server=127.0.0.1;port=3306;Database=planningpoker;uid=planningpoker;pwd=Moxqzqyd47;", ServerVersion.Create(8, 0, 31, ServerType.MySql));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
