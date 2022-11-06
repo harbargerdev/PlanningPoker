@@ -1,9 +1,7 @@
-﻿using Castle.Core.Logging;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit;
 using NUnit.Framework;
 using PlanningPoker.Core.Entities;
 using PlanningPoker.Core.Utilities;
@@ -11,7 +9,6 @@ using PlanningPoker.Website.Controllers;
 using PlanningPoker.Website.Data;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PlanningPoker.WebsiteTests.HomeControllerTests
 {
@@ -39,9 +36,9 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 
             // DB Context Setup
             var options = new DbContextOptionsBuilder<GameContext>()
-                                .UseInMemoryDatabase(databaseName: "InMemoryPlanningPoker")
+                                .UseInMemoryDatabase(databaseName: "InMemoryPlanningPokerDb")
                                 .Options;
-            gameContext = new GameContext(options);
+            gameContext = new InMemoryGameContext(options);
         }
 
         [Test]

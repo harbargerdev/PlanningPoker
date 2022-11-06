@@ -38,9 +38,9 @@ namespace PlanningPoker.WebsiteTests.HomeControllerTests
 
             // Setup GameContext
             var options = new DbContextOptionsBuilder<GameContext>()
-                                .UseInMemoryDatabase(databaseName: "InMemoryPlanningPoker")
+                                .UseInMemoryDatabase(databaseName: "InMemoryPlanningPokerDb")
                                 .Options;
-            _gameContext = new GameContext(options);
+            _gameContext = new InMemoryGameContext(options);
         }
 
         [Test]
