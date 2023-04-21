@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 6.0
+  pre_build:
+    commands:
+      - echo Nothing is happening in pre-build, just validating this is logged
+  build:
+    commands:
+      - echo Starting build phase
+      - dotnet test PlanningPoker.sln
+      - dotnet publish PlanningPoker.sln -c Release -o ./artifacts      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - artifacts/*

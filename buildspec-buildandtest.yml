@@ -11,11 +11,7 @@ phases:
     commands:
       - echo Starting build phase
       - dotnet build PlanningPoker.sln
-      - dotnet test PlanningPoker.sln
-      - dotnet publish PlanningPoker.sln -c Release -o ./artifacts      
+      - dotnet test PlanningPoker.sln    
   post_build:
     commands:
       - echo Build completed on `date`
-artifacts:
-  files:
-    - artifacts/*
