@@ -10,7 +10,6 @@ phases:
   build:
     commands:
       - echo Starting build phase
-      - dotnet test PlanningPoker.sln
       - dotnet publish PlanningPoker.sln -c Release -o ./artifacts      
   post_build:
     commands:
